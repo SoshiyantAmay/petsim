@@ -1,3 +1,6 @@
+package.path = "./src/?.lua;" .. package.path
+package.path = "./lib/?.lua;" .. package.path
+
 local Game = require("src.game")
 local Utils = require("src.utils")
 

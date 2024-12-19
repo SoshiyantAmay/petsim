@@ -1,5 +1,5 @@
-local Pet = require("src.pet")
-local Utils = require("src.utils")
+local Pet = require("pet")
+local utils = require("utils")
 
 local Game = {}
 
@@ -44,12 +44,12 @@ function Game:save()
 		table.insert(save_data.pets, pet:get_status())
 	end
 
-	return Utils.save_game(save_data)
+	return utils.save_game(save_data)
 end
 
 -- Load game state
 function Game:load()
-	local loaded_data = Utils.load_game()
+	local loaded_data = utils.load_game()
 	if not loaded_data then
 		return nil
 	end

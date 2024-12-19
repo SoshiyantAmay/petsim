@@ -1,6 +1,4 @@
--- package.path = ";../?.lua" .. package.path
-
-local Config = require("petsim.config")
+local Config = require("../config")
 
 local Pet = {}
 Pet.__index = Pet
@@ -9,7 +7,7 @@ Pet.__index = Pet
 function Pet.new(name, species, difficulty)
 	local self = setmetatable({}, Pet)
 	local config = Config.initial_pet_stats
-	local species_config = Config.species[species:lower()] or Config.species.dog
+	local species_config = Config.species[species:lower()] or Config.species.generic
 	local difficulty_config = Config.difficulty[difficulty or "normal"]
 
 	self.name = name or "Unnamed Pet"

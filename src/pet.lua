@@ -1,5 +1,9 @@
-local Config = require("../config")
-
+-- -- Add assertions to verify config structure
+-- assert(type(Config) == "table", "Config must be a table")
+-- assert(type(Config.initial_pet_stats) == "table", "Config.initial_pet_stats must be a table")
+-- assert(type(Config.species) == "table", "Config.species must be a table")
+-- assert(type(Config.difficulty) == "table", "Config.difficulty must be a table")
+--
 local Pet = {}
 Pet.__index = Pet
 
@@ -9,6 +13,19 @@ function Pet.new(name, species, difficulty)
 	local config = Config.initial_pet_stats
 	local species_config = Config.species[species:lower()] or Config.species.generic
 	local difficulty_config = Config.difficulty[difficulty or "normal"]
+
+	-- print("=== Config Contents ===")
+	-- Utils.printTable(Config)
+	-- print("=====================")
+
+	-- print("Config.initial_pet_stats:", Config.initial_pet_stats)
+	--
+	-- print("Species (input):", species)
+	-- print("Species (lowercase):", species:lower())
+	-- print("Config.species:", Config.species)
+	--
+	-- print("Difficulty:", difficulty)
+	-- print("Config.difficulty:", Config.difficulty)
 
 	self.name = name or "Unnamed Pet"
 	self.species = species or "Generic"

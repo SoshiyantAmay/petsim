@@ -1,4 +1,4 @@
-local json = require("dkjson") -- Ensure you have a JSON library
+local json = require("dkjson")
 
 local Utils = {}
 
@@ -61,6 +61,19 @@ function Utils.generate_pet_name()
 	local suffix = suffixes[math.random(#suffixes)]
 
 	return prefix .. " " .. suffix
+end
+
+-- Helper function to recursively print table contents
+function Utils.printTable(t, indent)
+	indent = indent or ""
+	for k, v in pairs(t) do
+		if type(v) == "table" then
+			print(indent .. k .. ":")
+			Utils.printTable(v, indent .. "  ")
+		else
+			print(indent .. k .. ":", v)
+		end
+	end
 end
 
 return Utils

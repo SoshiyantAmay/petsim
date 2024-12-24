@@ -1,5 +1,4 @@
-local Pet = require("pet")
-local utils = require("utils")
+local Pet = require("src.pet")
 
 local Game = {}
 
@@ -14,8 +13,8 @@ function Game.new()
 end
 
 -- Create a new pet
-function Game:create_pet(name, species)
-	local pet = Pet.new(name, species)
+function Game:create_pet(name, species, difficulty)
+	local pet = Pet.new(name, species, difficulty or "normal")
 	table.insert(self.pets, pet)
 	return pet
 end
@@ -44,12 +43,12 @@ function Game:save()
 		table.insert(save_data.pets, pet:get_status())
 	end
 
-	return utils.save_game(save_data)
+	return Utils.save_game(save_data)
 end
 
 -- Load game state
 function Game:load()
-	local loaded_data = utils.load_game()
+	local loaded_data = Utils.load_game()
 	if not loaded_data then
 		return nil
 	end

@@ -27,7 +27,7 @@ end
 
 -- Save game to file
 function Utils.save_game(data)
-	local save_path = "data/saves.json"
+	local save_path = "data/pets.json"
 	local encoded_data = json.encode(data)
 
 	local success, err = Utils.safe_write_file(save_path, encoded_data)
@@ -41,7 +41,7 @@ end
 
 -- Load game from file
 function Utils.load_game()
-	local save_path = "data/saves.json"
+	local save_path = "data/pets.json"
 	local success, content = Utils.safe_read_file(save_path)
 
 	if not success then

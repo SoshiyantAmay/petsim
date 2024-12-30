@@ -1,4 +1,4 @@
-local json = require("dkjson")
+local json = require("lib.dkjson")
 
 local Utils = {}
 

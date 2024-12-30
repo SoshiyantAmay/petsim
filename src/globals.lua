@@ -1,5 +1,5 @@
 -- Add the root, src and lib directories to the package path
-package.path = "./?.lua;" .. "./src/?.lua;" .. "./lib/?.lua;" .. package.path
+package.path = "./?.lua;" .. "./src/?.lua;" .. "./src/game/?.lua" .. "./src/ui/?.lua" .. "./lib/?.lua;" .. package.path
 
 -- Load Globals
 Utils = require("utils")

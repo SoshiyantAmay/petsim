@@ -61,12 +61,9 @@ function Draw.stats(gameState, fonts)
 	Stats.drawBar("Energy", status.energy, y + Constants.BAR_PADDING * 4)
 end
 
-function Draw.buttons(fonts)
-	love.graphics.setFont(fonts.game)
-	for i, button in ipairs(Button.buttons) do
-		local button_y = Constants.BUTTONS_START_Y + (i - 1) * (Constants.BUTTON_HEIGHT + Constants.BUTTON_PADDING)
-		Button.draw(button.text, Constants.BUTTONS_START_X, button_y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT)
-	end
+function Draw.buttons(gameState, fonts)
+	love.graphics.setFont(fonts.game) -- Set fonts once here and button will get it
+	Button.drawAll(gameState) -- This will use the proper button drawing with disabled states
 end
 
 return Draw

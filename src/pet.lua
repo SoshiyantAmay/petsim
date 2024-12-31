@@ -1,31 +1,11 @@
--- -- Add assertions to verify config structure
--- assert(type(Config) == "table", "Config must be a table")
--- assert(type(Config.initial_pet_stats) == "table", "Config.initial_pet_stats must be a table")
--- assert(type(Config.species) == "table", "Config.species must be a table")
--- assert(type(Config.difficulty) == "table", "Config.difficulty must be a table")
---
 local Pet = {}
 Pet.__index = Pet
 
--- Constructor for creating a new pet
 function Pet.new(name, species, difficulty)
 	local self = setmetatable({}, Pet)
 	local config = Config.initial_pet_stats
 	local species_config = Config.species[species:lower()] or Config.species.generic
 	local difficulty_config = Config.difficulty[difficulty or "normal"]
-
-	-- print("=== Config Contents ===")
-	-- Utils.printTable(Config)
-	-- print("=====================")
-
-	-- print("Config.initial_pet_stats:", Config.initial_pet_stats)
-	--
-	-- print("Species (input):", species)
-	-- print("Species (lowercase):", species:lower())
-	-- print("Config.species:", Config.species)
-	--
-	-- print("Difficulty:", difficulty)
-	-- print("Config.difficulty:", Config.difficulty)
 
 	self.name = name or "Unnamed Pet"
 	self.species = species or "Generic"
@@ -44,8 +24,30 @@ function Pet.new(name, species, difficulty)
 
 	-- Tracking flags
 	self.is_alive = true
+	self.death_reason = nil
+	self.death_age = nil
 
 	return self
+end
+
+-- New method to check death conditions
+function Pet:check_death()
+	if self.hunger <= 0 then
+		self.health = math.max(0, self.health - 10 * self.difficulty_modifier.stat_decay_rate)
+		self.death_reason = "starvation"
+	end
+
+	if self.energy <= 0 then
+		self.health = math.max(0, self.health - 10 * self.difficulty_modifier.stat_decay_rate)
+		self.death_reason = "exhaustion"
+	end
+
+	if self.health <= 0 and self.is_alive then
+		self.is_alive = false
+		self.death_age = self.age
+		return true
+	end
+	return false
 end
 
 -- Feed the pet
@@ -57,6 +59,8 @@ function Pet:feed()
 
 	self.hunger = math.min(100, self.hunger + 20 * decay_rate)
 	self.happiness = math.min(100, self.happiness + 10 * decay_rate)
+
+	self:check_death()
 	return true
 end
 
@@ -71,6 +75,8 @@ function Pet:play()
 
 	self.happiness = math.min(100, self.happiness + happiness_gain * decay_rate)
 	self.energy = math.max(0, self.energy - energy_cost * decay_rate)
+
+	self:check_death()
 	return true
 end
 
@@ -83,6 +89,8 @@ function Pet:rest()
 
 	self.energy = math.min(100, self.energy + 30 * decay_rate)
 	self.hunger = math.max(0, self.hunger - 10 * decay_rate)
+
+	self:check_death()
 	return true
 end
 
@@ -97,14 +105,7 @@ function Pet:age_up()
 	self.hunger = math.max(0, self.hunger - 5 * decay_rate * age_penalty)
 	self.energy = math.max(0, self.energy - 5 * decay_rate * age_penalty)
 
-	-- Check for potential death conditions
-	if self.hunger <= 0 or self.energy <= 0 then
-		self.health = math.max(0, self.health - 10 * decay_rate)
-	end
-
-	if self.health <= 0 then
-		self.is_alive = false
-	end
+	self:check_death()
 end
 
 -- Get pet status
@@ -119,6 +120,8 @@ function Pet:get_status()
 		age = self.age,
 		health = self.health,
 		is_alive = self.is_alive,
+		death_reason = self.death_reason,
+		death_age = self.death_age,
 	}
 end
 

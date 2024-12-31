@@ -1,27 +1,54 @@
 local Constants = require("src.ui.constants")
+local GameState = require("src.game.state")
 
 local Button = {}
 
 Button.buttons = {
-	{ text = "Refresh", action = "refresh" },
+	{ text = "Refresh", action = "refresh", alwaysEnabled = true },
 	{ text = "Next Day", action = "nextday" },
 	{ text = "Feed", action = "feed" },
 	{ text = "Rest", action = "rest" },
 	{ text = "Play", action = "play" },
-	{ text = "Exit", action = "exit" },
+	{ text = "Exit", action = "exit", alwaysEnabled = true },
 }
 
-function Button.draw(text, x, y, width, height)
+-- Color definitions for better management
+local Colors = {
+	enabled = {
+		background = { 0.2, 0.4, 0.6, 0.9 }, -- Blue-ish
+		border = { 0.3, 0.5, 0.7, 1 },
+		text = { 1, 1, 1, 1 }, -- White
+	},
+	disabled = {
+		background = { 0.8, 0.8, 0.8, 0.5 }, -- Light gray
+		border = { 0.7, 0.7, 0.7, 0.5 },
+		text = { 0.5, 0.5, 0.5, 0.8 }, -- Medium gray
+	},
+}
+
+function Button.draw(text, x, y, width, height, disabled)
 	-- Button background
-	love.graphics.setColor(0.2, 0.2, 0.2, 0.8)
+	if disabled then
+		love.graphics.setColor(unpack(Colors.disabled.background))
+	else
+		love.graphics.setColor(unpack(Colors.enabled.background))
+	end
 	love.graphics.rectangle("fill", x, y, width, height, 5)
 
 	-- Button border
-	love.graphics.setColor(1, 1, 1, 0.5)
+	if disabled then
+		love.graphics.setColor(unpack(Colors.disabled.border))
+	else
+		love.graphics.setColor(unpack(Colors.enabled.border))
+	end
 	love.graphics.rectangle("line", x, y, width, height, 5)
 
 	-- Button text
-	love.graphics.setColor(1, 1, 1, 1)
+	if disabled then
+		love.graphics.setColor(unpack(Colors.disabled.text))
+	else
+		love.graphics.setColor(unpack(Colors.enabled.text))
+	end
 	local textWidth = love.graphics.getFont():getWidth(text)
 	local textHeight = love.graphics.getFont():getHeight()
 	local textX = x + (width - textWidth) / 2
@@ -36,32 +63,61 @@ end
 function Button.handleClick(x, y, gameState)
 	for i, btn in ipairs(Button.buttons) do
 		local button_y = Constants.BUTTONS_START_Y + (i - 1) * (Constants.BUTTON_HEIGHT + Constants.BUTTON_PADDING)
+
+		-- Only check if button is disabled if it's not always enabled
+		local isDisabled = not btn.alwaysEnabled and not gameState.pet.is_alive
+
 		if
-			Button.isInside(x, y, Constants.BUTTONS_START_X, button_y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT)
+			not isDisabled
+			and Button.isInside(
+				x,
+				y,
+				Constants.BUTTONS_START_X,
+				button_y,
+				Constants.BUTTON_WIDTH,
+				Constants.BUTTON_HEIGHT
+			)
 		then
-			Button.handleAction(btn.action, gameState)
+			if btn.action == "refresh" then
+				GameState.checkPetDeath(gameState)
+				gameState.game:save()
+			elseif btn.action == "nextday" then
+				gameState.game:advance_day()
+				gameState.game:save()
+			elseif btn.action == "feed" then
+				gameState.pet:feed()
+				gameState.game:save()
+			elseif btn.action == "rest" then
+				gameState.pet:rest()
+				gameState.game:save()
+			elseif btn.action == "play" then
+				gameState.pet:play()
+				gameState.game:save()
+			elseif btn.action == "exit" then
+				love.event.quit()
+			end
 		end
 	end
 end
 
-function Button.handleAction(action, gameState)
-	if action == "refresh" then
-		gameState.game:save()
-	elseif action == "nextday" then
-		gameState.game:advance_day()
-		gameState.game:save()
-	elseif action == "feed" then
-		gameState.pet:feed()
-		gameState.game:save()
-	elseif action == "rest" then
-		gameState.pet:rest()
-		gameState.game:save()
-	elseif action == "play" then
-		gameState.pet:play()
-		gameState.game:save()
-	elseif action == "exit" then
-		love.event.quit()
+function Button.drawAll(gameState)
+	love.graphics.setFont(love.graphics.getFont())
+	for i, btn in ipairs(Button.buttons) do
+		local button_y = Constants.BUTTONS_START_Y + (i - 1) * (Constants.BUTTON_HEIGHT + Constants.BUTTON_PADDING)
+
+		-- Always draw enabled colors for alwaysEnabled buttons, regardless of pet state
+		local shouldBeDisabled = not btn.alwaysEnabled and not gameState.pet.is_alive
+
+		Button.draw(
+			btn.text,
+			Constants.BUTTONS_START_X,
+			button_y,
+			Constants.BUTTON_WIDTH,
+			Constants.BUTTON_HEIGHT,
+			shouldBeDisabled -- This will be false for Refresh and Exit buttons
+		)
 	end
 end
 
 return Button
+

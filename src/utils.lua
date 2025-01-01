@@ -1,11 +1,12 @@
 local Constants = require("src.ui.constants")
-local json = require("lib.dkjson")
+local Json = require("lib.dkjson")
 
 local Utils = {}
 
 Utils.isNaming = false
 Utils.currentInput = ""
 Utils.inputCallback = nil
+Utils.selectedDifficulty = "normal"
 
 function Utils.startTextInput(callback)
 	Utils.isNaming = true
@@ -13,31 +14,88 @@ function Utils.startTextInput(callback)
 	Utils.inputCallback = callback
 end
 
-function Utils.handleTextInput()
+-- Draw a dialog including a text box for pet name entry and radio buttons
+-- for difficulty selection.
+function Utils.handleTextInput(fonts)
+	-- Background and title
+	love.graphics.setFont(fonts.dialog)
 	love.graphics.setColor(0, 0, 0, 0.8)
 	love.graphics.rectangle(
 		"fill",
 		Constants.WINDOW_WIDTH / 4,
-		Constants.WINDOW_HEIGHT / 2 - 30,
+		Constants.WINDOW_HEIGHT / 2 - 60,
 		Constants.WINDOW_WIDTH / 2,
-		60
+		120
 	)
 
+	-- Name input title and text box
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.printf(
 		"Enter pet name:",
+		Constants.WINDOW_WIDTH / 4,
+		Constants.WINDOW_HEIGHT / 2 - 55,
+		Constants.WINDOW_WIDTH / 2,
+		"center"
+	)
+
+	love.graphics.printf(
+		Utils.currentInput .. "_",
 		Constants.WINDOW_WIDTH / 4,
 		Constants.WINDOW_HEIGHT / 2 - 25,
 		Constants.WINDOW_WIDTH / 2,
 		"center"
 	)
-	love.graphics.printf(
-		Utils.currentInput .. "_",
-		Constants.WINDOW_WIDTH / 4,
-		Constants.WINDOW_HEIGHT / 2 + 5,
-		Constants.WINDOW_WIDTH / 2,
-		"center"
-	)
+
+	-- Draw difficulty selection title
+	local startY = Constants.WINDOW_HEIGHT / 2 + 5
+	love.graphics.printf("Select difficulty:", Constants.WINDOW_WIDTH / 4, startY, Constants.WINDOW_WIDTH / 2, "center")
+
+	-- Calculate dimensions for proper centering
+	local optionWidth = 80 -- Width of each option including radio button and text
+	local totalWidth = optionWidth * 3 -- Total width of all three options
+	local startX = Constants.WINDOW_WIDTH / 2 - totalWidth / 2 + 15 -- Starting X for first option
+
+	-- Draw difficulty options
+	for i = 1, 3 do
+		local x = startX + (i - 1) * optionWidth
+		local y = startY + 25
+		local radioX = x + 5
+		local textX = x + 20 -- Give some space after radio button
+
+		local difficultyName = Difficulty.get_name(i)
+
+		-- Draw radio button
+		love.graphics.setColor(1, 1, 1, 1)
+		love.graphics.circle("line", radioX, y + 10, 5)
+
+		if difficultyName == Utils.selectedDifficulty then
+			love.graphics.circle("fill", radioX, y + 10, 3)
+		end
+
+		-- Draw difficulty option label
+		love.graphics.print(Utils.firstToUpper(difficultyName), textX, y)
+	end
+end
+
+-- Function to handle difficulty selection UI
+function Utils.handleDifficultyClick(x, y)
+	if Utils.isNaming then
+		local startY = Constants.WINDOW_HEIGHT / 2 + 30
+		local optionWidth = 80
+		local totalWidth = optionWidth * 3
+		local startX = Constants.WINDOW_WIDTH / 2 - totalWidth / 2
+
+		for i = 1, 3 do
+			local buttonX = startX + (i - 1) * optionWidth
+			local buttonY = startY
+
+			if x >= buttonX and x <= buttonX + optionWidth and y >= buttonY and y <= buttonY + 20 then
+				Utils.selectedDifficulty = Difficulty.get_name(i)
+				return true
+			end
+		end
+	end
+	return false
 end
 
 function Utils.handleTextInputKey(key)
@@ -96,7 +154,7 @@ end
 -- Save game to file
 function Utils.save_game(data)
 	local save_path = "data/pets.json"
-	local encoded_data = json.encode(data)
+	local encoded_data = Json.encode(data)
 
 	local success, err = Utils.safe_write_file(save_path, encoded_data)
 	if not success then
@@ -117,7 +175,7 @@ function Utils.load_game()
 		return nil
 	end
 
-	return json.decode(content)
+	return Json.decode(content)
 end
 
 -- Generate random pet name
@@ -142,6 +200,11 @@ function Utils.printTable(t, indent)
 			print(indent .. k .. ":", v)
 		end
 	end
+end
+
+-- Change the first character in a string to uppercase
+function Utils.firstToUpper(str)
+	return (str:gsub("^%l", string.upper))
 end
 
 return Utils

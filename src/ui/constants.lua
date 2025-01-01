@@ -9,7 +9,7 @@ local Constants = {
 	STATUS_BOX_PADDING = 15, -- New constant for internal status box padding
 	BUTTON_WIDTH = 80,
 	BUTTON_HEIGHT = 25,
-	BUTTON_PADDING = 10,
+	BUTTON_PADDING = 5,
 	BUTTONS_START_X = 500, -- WINDOW_WIDTH - 100
 	BUTTONS_START_Y = 50,
 }

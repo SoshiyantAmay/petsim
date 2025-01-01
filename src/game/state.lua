@@ -44,8 +44,9 @@ function GameState.createNewPet(state)
 			name = "Pet" .. (#state.game:get_pets() + 1)
 		end
 
-		state.game:create_pet(name, "generic", "normal")
-		state.pet = state.game:get_pets()[#state.game:get_pets()]
+		state.game:create_pet(name, "generic", Utils.selectedDifficulty)
+		local lastPetIndex = #state.game:get_pets() -- Get the last pet's status from the list of saved pets in pets.json
+		state.pet = state.game:get_pets()[lastPetIndex]
 		state.game:save()
 	end)
 end

@@ -69,12 +69,14 @@ function Pet:play()
 	if not self.is_alive then
 		return false
 	end
+
 	local happiness_gain = self.species_bonus.base_happiness_gain
 	local energy_cost = self.species_bonus.base_energy_cost
 	local decay_rate = self.difficulty_modifier.stat_decay_rate
 
 	self.happiness = math.min(100, self.happiness + happiness_gain * decay_rate)
 	self.energy = math.max(0, self.energy - energy_cost * decay_rate)
+	self.hunger = math.max(0, self.hunger - 10 * decay_rate)
 
 	self:check_death()
 	return true
@@ -104,6 +106,7 @@ function Pet:age_up()
 	-- Decrease attributes over time
 	self.hunger = math.max(0, self.hunger - 5 * decay_rate * age_penalty)
 	self.energy = math.max(0, self.energy - 5 * decay_rate * age_penalty)
+	self.happiness = math.max(0, self.happiness - 5 * decay_rate * age_penalty)
 
 	self:check_death()
 end
@@ -123,6 +126,87 @@ function Pet:get_status()
 		death_reason = self.death_reason,
 		death_age = self.death_age,
 	}
+end
+
+-- Give medicine when pet's health is low
+function Pet:give_medicine()
+	if not self.is_alive then
+		return false
+	end
+
+	self.health = math.min(100, self.health + 15 * self.difficulty_modifier.stat_decay_rate)
+	self.happiness = math.max(0, self.happiness - 5) -- Pets usually don't like medicine
+	return true
+end
+
+-- Give vitamins for stat boosts
+function Pet:give_vitamins()
+	if not self.is_alive then
+		return false
+	end
+
+	self.health = math.min(100, self.health + 5)
+	self.energy = math.min(100, self.energy + 10)
+	return true
+end
+
+-- Train pet to learn new skills
+function Pet:train()
+	if not self.is_alive then
+		return false
+	end
+
+	self.energy = math.max(0, self.energy - 15 * self.difficulty_modifier.stat_decay_rate)
+	self.hunger = math.max(0, self.hunger - 10 * self.difficulty_modifier.stat_decay_rate)
+	-- Could add a skills/experience system
+	return true
+end
+
+-- Pet/Cuddle for quick happiness boost
+function Pet:cuddle()
+	if not self.is_alive then
+		return false
+	end
+
+	self.happiness = math.min(100, self.happiness + 5)
+	-- Less energy cost than playing
+	self.energy = math.max(0, self.energy - 2)
+	return true
+end
+
+-- Groom/Clean pet
+function Pet:groom()
+	if not self.is_alive then
+		return false
+	end
+
+	self.happiness = math.min(100, self.happiness + 10)
+	self.health = math.min(100, self.health + 5)
+	return true
+end
+
+-- Give treats (quick happiness boost but affects health)
+function Pet:give_treat()
+	if not self.is_alive then
+		return false
+	end
+
+	self.happiness = math.min(100, self.happiness + 15)
+	self.hunger = math.min(100, self.hunger + 5)
+	self.health = math.max(0, self.health - 2) -- Small health penalty for treats
+	return true
+end
+
+-- Exercise (improves health but costs energy)
+function Pet:exercise()
+	if not self.is_alive then
+		return false
+	end
+
+	self.health = math.min(100, self.health + 10)
+	self.energy = math.max(0, self.energy - 20)
+	self.hunger = math.max(0, self.hunger - 15)
+	return true
 end
 
 return Pet

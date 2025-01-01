@@ -28,7 +28,7 @@ function Draw.title(gameState, fonts)
 
 	love.graphics.setColor(1, 1, 1, 0.7)
 	love.graphics.setFont(fonts.title)
-	love.graphics.printf("PetSim - Day " .. gameState.game.current_day, 0, 18, Constants.WINDOW_WIDTH, "center")
+	love.graphics.printf("PetSim - Day " .. gameState.game.current_day, 0, 12, Constants.WINDOW_WIDTH, "center")
 end
 
 function Draw.petInfo(gameState, fonts)
@@ -38,22 +38,28 @@ function Draw.petInfo(gameState, fonts)
 		"fill",
 		10,
 		Constants.STATS_Y - Constants.STATUS_BOX_PADDING,
-		Constants.BAR_WIDTH + 120,
+		Constants.BAR_WIDTH + 150,
 		95 -- Adjusted height to accommodate all content
 	)
 
 	love.graphics.setColor(1, 1, 1)
 	love.graphics.setFont(fonts.status)
 	local status = gameState.pet:get_status()
+	--
+	-- Format difficulty with first letter capitalized
+	local difficulty = status.difficulty:sub(1, 1):upper() .. status.difficulty:sub(2)
 
 	love.graphics.print(
 		status.name
 			.. " ("
 			.. status.species
-			.. ") - Age: "
+			.. ") | "
+			.. (status.is_alive and "Alive" or "Dead")
+			.. " @ "
 			.. status.age
-			.. " days - "
-			.. (status.is_alive and "Alive" or "Dead"),
+			.. " days"
+			.. " | Difficulty: "
+			.. difficulty,
 		Constants.STATS_X,
 		Constants.STATS_Y - 10
 	)
@@ -69,35 +75,6 @@ function Draw.stats(gameState, fonts)
 	Stats.drawBar("Happiness", status.happiness, baseY + Constants.BAR_PADDING * 2)
 	Stats.drawBar("Energy", status.energy, baseY + Constants.BAR_PADDING * 3)
 end
--- function Draw.petInfo(gameState, fonts)
--- 	love.graphics.setColor(0, 0, 0, 0.35)
--- 	love.graphics.rectangle("fill", 10, Constants.STATS_Y - 10, Constants.BAR_WIDTH + 120, 90)
---
--- 	love.graphics.setColor(1, 1, 1)
--- 	love.graphics.setFont(fonts.status)
--- 	local status = gameState.pet:get_status()
--- 	love.graphics.print(
--- 		status.name
--- 			.. " ("
--- 			.. status.species
--- 			.. ") - Age: "
--- 			.. status.age
--- 			.. " days - "
--- 			.. (status.is_alive and "Alive" or "Dead"),
--- 		Constants.STATS_X,
--- 		Constants.STATS_Y
--- 	)
--- end
---
--- function Draw.stats(gameState, fonts)
--- 	love.graphics.setFont(fonts.game)
--- 	local status = gameState.pet:get_status()
--- 	local y = Constants.STATS_Y
--- 	Stats.drawBar("Health", status.health, y + Constants.BAR_PADDING)
--- 	Stats.drawBar("Hunger", status.hunger, y + Constants.BAR_PADDING * 2)
--- 	Stats.drawBar("Happiness", status.happiness, y + Constants.BAR_PADDING * 3)
--- 	Stats.drawBar("Energy", status.energy, y + Constants.BAR_PADDING * 4)
--- end
 
 function Draw.buttons(gameState, fonts)
 	love.graphics.setFont(fonts.button) -- Set fonts once here and button will get it

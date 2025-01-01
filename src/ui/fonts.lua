@@ -3,12 +3,14 @@ local Fonts = {}
 function Fonts.load()
 	-- Genera UI elements
 	Fonts.game = love.graphics.newFont("assets/fonts/Rajdhani-Light.ttf", 13)
+	-- Dialog
+	Fonts.dialog = love.graphics.newFont("assets/fonts/Rajdhani-Regular.ttf", 15)
 	-- Pixel font for title
-	Fonts.title = love.graphics.newFont("assets/fonts/PressStart2P-Regular.ttf", 16)
+	Fonts.title = love.graphics.newFont("assets/fonts/Righteous-Regular.ttf", 20)
 	-- Pet status
-	Fonts.status = love.graphics.newFont("assets/fonts/Rajdhani-Regular.ttf", 15)
+	Fonts.status = love.graphics.newFont("assets/fonts/Rajdhani-Medium.ttf", 13)
 	-- Buttons
-	Fonts.button = love.graphics.newFont("assets/fonts/Rajdhani-SemiBold.ttf", 15)
+	Fonts.button = love.graphics.newFont("assets/fonts/Rajdhani-Medium.ttf", 15)
 	return Fonts
 end
 

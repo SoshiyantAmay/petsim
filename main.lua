@@ -54,7 +54,11 @@ end
 
 function love.mousepressed(x, y, button, istouch, presses)
 	if button == 1 then -- Left click
-		Button.handleClick(x, y, gameState)
+		if Utils.isNaming then
+			Utils.handleDifficultyClick(x, y)
+		else
+			Button.handleClick(x, y, gameState)
+		end
 	end
 end
 
@@ -65,7 +69,7 @@ function love.draw()
 	Draw.stats(gameState, fonts)
 	Draw.buttons(gameState, fonts)
 	if Utils.isNaming then
-		Utils.handleTextInput()
+		Utils.handleTextInput(fonts)
 	end
 end
 

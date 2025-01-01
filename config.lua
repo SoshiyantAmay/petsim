@@ -4,6 +4,7 @@ local config = {
 		happiness = 50,
 		energy = 100,
 		health = 100,
+		-- coins = 10
 	},
 	species = {
 		dog = {

@@ -9,22 +9,16 @@ Button.buttons = {
 	{ text = "Feed", action = "feed" },
 	{ text = "Rest", action = "rest" },
 	{ text = "Play", action = "play" },
-	{ text = "Medicine", action = "medicine" },
 	{ text = "Train", action = "train" },
 	{ text = "Cuddle", action = "cuddle" },
 	{ text = "Groom", action = "groom" },
+	{ text = "Treat", action = "treat" },
+	{ text = "Medicine", action = "medicine" },
+	{ text = "Vitamins", action = "vitamins" },
+	{ text = "Exercise", action = "exercise" },
 	{ text = "Exit", action = "exit", alwaysEnabled = true },
 }
 
--- Button.buttons = {
--- 	{ text = "Refresh", action = "refresh", alwaysEnabled = true },
--- 	{ text = "Next Day", action = "nextday" },
--- 	{ text = "Feed", action = "feed" },
--- 	{ text = "Rest", action = "rest" },
--- 	{ text = "Play", action = "play" },
--- 	{ text = "Exit", action = "exit", alwaysEnabled = true },
--- }
---
 -- Color definitions for better management
 local Colors = {
 	enabled = {
@@ -93,35 +87,34 @@ function Button.handleClick(x, y, gameState)
 		then
 			if btn.action == "refresh" then
 				GameState.checkPetDeath(gameState)
-				gameState.game:save()
 			elseif btn.action == "nextday" then
 				gameState.game:advance_day()
-				gameState.game:save()
 			elseif btn.action == "feed" then
 				gameState.pet:feed()
-				gameState.game:save()
 			elseif btn.action == "rest" then
 				gameState.pet:rest()
-				gameState.game:save()
 			elseif btn.action == "play" then
 				gameState.pet:play()
-				gameState.game:save()
 			elseif btn.action == "medicine" then
 				gameState.pet:give_medicine()
-				gameState.game:save()
+			elseif btn.action == "treat" then
+				gameState.pet:give_treat()
+			elseif btn.action == "exercise" then
+				gameState.pet:exercise()
+			elseif btn.action == "vitamins" then
+				gameState.pet:give_vitamins()
 			elseif btn.action == "train" then
 				gameState.pet:train()
-				gameState.game:save()
 			elseif btn.action == "cuddle" then
 				gameState.pet:cuddle()
-				gameState.game:save()
 			elseif btn.action == "groom" then
 				gameState.pet:groom()
-				gameState.game:save()
 			elseif btn.action == "exit" then
 				gameState.game:save()
 				love.event.quit()
 			end
+			gameState.pet:check_death()
+			gameState.game:save()
 		end
 	end
 end

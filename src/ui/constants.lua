@@ -11,6 +11,6 @@ local Constants = {
 	BUTTON_HEIGHT = 25,
 	BUTTON_PADDING = 5,
 	BUTTONS_START_X = 500, -- WINDOW_WIDTH - 100
-	BUTTONS_START_Y = 50,
+	BUTTONS_START_Y = 10,
 }
 return Constants

@@ -32,6 +32,11 @@ end
 
 -- New method to check death conditions
 function Pet:check_death()
+	if self.happiness <= 0 then
+		self.health = math.max(0, self.health - 10 * self.difficulty_modifier.stat_decay_rate)
+		self.death_reason = "depression"
+	end
+
 	if self.hunger <= 0 then
 		self.health = math.max(0, self.health - 10 * self.difficulty_modifier.stat_decay_rate)
 		self.death_reason = "starvation"
@@ -60,7 +65,6 @@ function Pet:feed()
 	self.hunger = math.min(100, self.hunger + 20 * decay_rate)
 	self.happiness = math.min(100, self.happiness + 10 * decay_rate)
 
-	self:check_death()
 	return true
 end
 
@@ -78,7 +82,6 @@ function Pet:play()
 	self.energy = math.max(0, self.energy - energy_cost * decay_rate)
 	self.hunger = math.max(0, self.hunger - 10 * decay_rate)
 
-	self:check_death()
 	return true
 end
 
@@ -92,7 +95,6 @@ function Pet:rest()
 	self.energy = math.min(100, self.energy + 30 * decay_rate)
 	self.hunger = math.max(0, self.hunger - 10 * decay_rate)
 
-	self:check_death()
 	return true
 end
 
@@ -107,8 +109,6 @@ function Pet:age_up()
 	self.hunger = math.max(0, self.hunger - 5 * decay_rate * age_penalty)
 	self.energy = math.max(0, self.energy - 5 * decay_rate * age_penalty)
 	self.happiness = math.max(0, self.happiness - 5 * decay_rate * age_penalty)
-
-	self:check_death()
 end
 
 -- Get pet status

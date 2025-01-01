@@ -10,8 +10,8 @@ function GameState.initialize()
 		state.game:create_pet("Blob", "generic", "normal")
 		state.game:save()
 	end
-
-	state.pet = state.game:get_pets()[1]
+	-- Get the last element of the retrieved pets from pets.json data file.
+	state.pet = state.game:get_pets()[#state.game:get_pets()]
 	return state
 end
 
@@ -39,12 +39,7 @@ function GameState.checkPetDeath(state)
 end
 
 function GameState.createNewPet(state)
-	local buttons = { "OK", "Cancel", enterbutton = 1, escapebutton = 2 }
-	local pressed = love.window.showMessageBox("New Pet", "Would you like to name your pet?", buttons, "info")
-
-	if pressed == 1 then
-		local success, name = love.window.showMessageBox("Enter Name", "Enter your pet's name:", "", "info")
-
+	Utils.startTextInput(function(name)
 		if not name or name:len() == 0 then
 			name = "Pet" .. (#state.game:get_pets() + 1)
 		end
@@ -52,7 +47,7 @@ function GameState.createNewPet(state)
 		state.game:create_pet(name, "generic", "normal")
 		state.pet = state.game:get_pets()[#state.game:get_pets()]
 		state.game:save()
-	end
+	end)
 end
 
 return GameState

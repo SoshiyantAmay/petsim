@@ -1,6 +1,74 @@
+local Constants = require("src.ui.constants")
 local json = require("lib.dkjson")
 
 local Utils = {}
+
+Utils.isNaming = false
+Utils.currentInput = ""
+Utils.inputCallback = nil
+
+function Utils.startTextInput(callback)
+	Utils.isNaming = true
+	Utils.currentInput = ""
+	Utils.inputCallback = callback
+end
+
+function Utils.handleTextInput()
+	love.graphics.setColor(0, 0, 0, 0.8)
+	love.graphics.rectangle(
+		"fill",
+		Constants.WINDOW_WIDTH / 4,
+		Constants.WINDOW_HEIGHT / 2 - 30,
+		Constants.WINDOW_WIDTH / 2,
+		60
+	)
+
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.printf(
+		"Enter pet name:",
+		Constants.WINDOW_WIDTH / 4,
+		Constants.WINDOW_HEIGHT / 2 - 25,
+		Constants.WINDOW_WIDTH / 2,
+		"center"
+	)
+	love.graphics.printf(
+		Utils.currentInput .. "_",
+		Constants.WINDOW_WIDTH / 4,
+		Constants.WINDOW_HEIGHT / 2 + 5,
+		Constants.WINDOW_WIDTH / 2,
+		"center"
+	)
+end
+
+function Utils.handleTextInputKey(key)
+	if Utils.isNaming then
+		if key == "backspace" then
+			Utils.currentInput = Utils.currentInput:sub(1, -2)
+		elseif key == "return" or key == "kpenter" then
+			local name = Utils.currentInput
+			if Utils.inputCallback then
+				Utils.inputCallback(name)
+			end
+			Utils.isNaming = false
+			Utils.currentInput = ""
+			Utils.inputCallback = nil
+		elseif key == "escape" then
+			Utils.isNaming = false
+			Utils.currentInput = ""
+			Utils.inputCallback = nil
+		end
+		return true
+	end
+	return false
+end
+
+function Utils.handleTextInputChar(t)
+	if Utils.isNaming and #Utils.currentInput < 20 then
+		Utils.currentInput = Utils.currentInput .. t
+		return true
+	end
+	return false
+end
 
 -- Safe file writing
 function Utils.safe_write_file(path, content)

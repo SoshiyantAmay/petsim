@@ -17,9 +17,10 @@ function Stats.drawBar(label, value, y)
 	love.graphics.rectangle("line", Constants.STATS_X, y, Constants.BAR_WIDTH, Constants.BAR_HEIGHT)
 	love.graphics.setLineWidth(1)
 
-	-- Label and value
+	-- Label and value with adjusted vertical alignment
 	love.graphics.setColor(1, 1, 1)
-	love.graphics.print(label .. ": " .. math.floor(value) .. "%", Constants.STATS_X + Constants.BAR_WIDTH + 10, y)
+	local textY = y - Constants.BAR_HEIGHT / 2 -- Center text vertically with bar
+	love.graphics.print(label .. ": " .. math.floor(value) .. "%", Constants.STATS_X + Constants.BAR_WIDTH + 10, textY)
 end
 
 return Stats

@@ -15,9 +15,9 @@ Button.buttons = {
 -- Color definitions for better management
 local Colors = {
 	enabled = {
-		background = { 0.2, 0.4, 0.6, 0.9 }, -- Blue-ish
-		border = { 0.3, 0.5, 0.7, 1 },
-		text = { 1, 1, 1, 1 }, -- White
+		background = { 0.2, 0.2, 0.2, 0.5 }, -- Dark gray
+		border = { 0.5, 0.5, 0.5, 0.5 },
+		text = { 1, 1, 1, 0.8 }, -- White
 	},
 	disabled = {
 		background = { 0.8, 0.8, 0.8, 0.5 }, -- Light gray
@@ -94,6 +94,7 @@ function Button.handleClick(x, y, gameState)
 				gameState.pet:play()
 				gameState.game:save()
 			elseif btn.action == "exit" then
+				gameState.game:save() -- Save before exiting
 				love.event.quit()
 			end
 		end
@@ -120,4 +121,3 @@ function Button.drawAll(gameState)
 end
 
 return Button
-

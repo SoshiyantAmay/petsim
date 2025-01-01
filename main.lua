@@ -13,26 +13,6 @@ local fonts
 local backgroundImage
 local lastPetStatus = nil
 
-local function createNewPet()
-	-- Show input dialog for pet name
-	local buttons = { "OK", "Cancel", enterbutton = 1, escapebutton = 2 }
-	local pressed = love.window.showMessageBox("New Pet", "Would you like to name your pet?", buttons, "info")
-
-	if pressed == 1 then
-		-- Show text input for name (info type shows OK button only)
-		local success, name = love.window.showMessageBox("Enter Name", "Enter your pet's name:", "", "info")
-
-		-- If name is empty or canceled, generate default name
-		if not name or name:len() == 0 then
-			name = "Pet" .. (#gameState.game:get_pets() + 1)
-		end
-
-		gameState.game:create_pet(name, "generic", "normal")
-		gameState.pet = gameState.game:get_pets()[#gameState.game:get_pets()]
-		gameState.game:save()
-	end
-end
-
 local function checkPetStatus()
 	local currentPet = gameState.pet
 	if not currentPet.is_alive and (lastPetStatus == nil or lastPetStatus.is_alive) then
@@ -50,11 +30,15 @@ local function checkPetStatus()
 		local buttons = { "Yes", "No", enterbutton = 1, escapebutton = 2 }
 		local pressed = love.window.showMessageBox("Pet Death", message, buttons, "info")
 
-		if pressed == 1 then
-			createNewPet()
+		if pressed == 1 then -- If user selected yes
+			GameState.createNewPet(gameState)
 		end
 	end
 	lastPetStatus = currentPet:get_status()
+end
+
+function love.textinput(t)
+	Utils.handleTextInputChar(t)
 end
 
 function love.load()
@@ -80,10 +64,14 @@ function love.draw()
 	Draw.petInfo(gameState, fonts)
 	Draw.stats(gameState, fonts)
 	Draw.buttons(gameState, fonts)
+	if Utils.isNaming then
+		Utils.handleTextInput()
+	end
 end
 
 -- Helper function to show the debug info when needed by pressing 'd'
 function love.keypressed(key)
+	Utils.handleTextInputKey(key)
 	if key == "d" then
 		-- Collect debug info
 		local debug_info = "Button States:\n\n"
@@ -98,5 +86,11 @@ function love.keypressed(key)
 				)
 		end
 		love.window.showMessageBox("Debug Info", debug_info, "info")
+	end
+end
+
+function love.quit()
+	if gameState and gameState.game then
+		gameState.game:save()
 	end
 end

@@ -1,13 +1,14 @@
-local Fonts = {
-	game = nil,
-	title = nil,
-	status = nil,
-}
+local Fonts = {}
 
 function Fonts.load()
-	Fonts.game = love.graphics.newFont(10)
-	Fonts.title = love.graphics.newFont("assets/fonts/PressStart2P-Regular.ttf", 14)
-	Fonts.status = love.graphics.newFont(11)
+	-- Genera UI elements
+	Fonts.game = love.graphics.newFont("assets/fonts/Rajdhani-Light.ttf", 13)
+	-- Pixel font for title
+	Fonts.title = love.graphics.newFont("assets/fonts/PressStart2P-Regular.ttf", 16)
+	-- Pet status
+	Fonts.status = love.graphics.newFont("assets/fonts/Rajdhani-Regular.ttf", 15)
+	-- Buttons
+	Fonts.button = love.graphics.newFont("assets/fonts/Rajdhani-SemiBold.ttf", 15)
 	return Fonts
 end
 

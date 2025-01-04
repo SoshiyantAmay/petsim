@@ -1,0 +1,48 @@
+.
+├── README.md
+├── assets
+│   ├── background.jpg
+│   ├── fonts
+│   │   ├── PressStart2P-Regular.ttf
+│   │   ├── Rajdhani-Bold.ttf
+│   │   ├── Rajdhani-Light.ttf
+│   │   ├── Rajdhani-Medium.ttf
+│   │   ├── Rajdhani-Regular.ttf
+│   │   ├── Rajdhani-SemiBold.ttf
+│   │   ├── Righteous-Regular.ttf
+│   │   └── VT323-Regular.ttf
+│   └── icons
+│       ├── cart.png
+│       ├── coin.png
+│       ├── day-and-night.png
+│       └── exit.png
+├── conf.lua
+├── config.lua
+├── data
+│   ├── pets.json
+│   └── pets.json_
+├── lib
+│   └── dkjson.lua
+├── main.lua
+├── proj_struct.txt
+├── src
+│   ├── game
+│   │   └── state.lua
+│   ├── game.lua
+│   ├── globals.lua
+│   ├── pet.lua
+│   ├── ui
+│   │   ├── button.lua
+│   │   ├── constants.lua
+│   │   ├── draw.lua
+│   │   ├── fonts.lua
+│   │   ├── shop.lua
+│   │   └── stats.lua
+│   └── utils.lua
+├── todo.txt
+└── txt
+    ├── claude.txt
+    ├── icons.txt
+    └── proj_struct.txt
+
+10 directories, 36 files

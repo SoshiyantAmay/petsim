@@ -1,1 +1,1 @@
-{"current_day":14,"pets":[{"difficulty":"normal","is_alive":true,"hunger":30,"happiness":90,"energy":20,"age":13,"species":"generic","health":50,"name":"Blob"}]}
+{"current_day":14,"pets":[{"is_alive":true,"hunger":30,"happiness":90,"energy":20,"health":50,"species":"generic","name":"Blob","difficulty":"normal","age":13}]}

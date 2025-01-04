@@ -14,8 +14,18 @@
 │   └── icons
 │       ├── cart.png
 │       ├── coin.png
-│       ├── day-and-night.png
-│       └── exit.png
+│       ├── cuddle.png
+│       ├── exercise.png
+│       ├── exit.png
+│       ├── feed.png
+│       ├── groom.png
+│       ├── medicine.png
+│       ├── next-day.png
+│       ├── play.png
+│       ├── rest.png
+│       ├── train.png
+│       ├── treat.png
+│       └── vitamins.png
 ├── conf.lua
 ├── config.lua
 ├── data
@@ -45,4 +55,4 @@
     ├── icons.txt
     └── proj_struct.txt
 
-10 directories, 36 files
+10 directories, 46 files

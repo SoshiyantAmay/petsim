@@ -24,7 +24,7 @@ end
 
 function Draw.title(gameState, fonts)
 	love.graphics.setColor(0, 0, 0, 0.35)
-	love.graphics.rectangle("fill", Constants.WINDOW_WIDTH / 4, 10, Constants.WINDOW_WIDTH / 2, 30)
+	love.graphics.rectangle("fill", Constants.WINDOW_WIDTH / 4, 10, Constants.WINDOW_WIDTH / 2, 40)
 
 	love.graphics.setColor(1, 1, 1, 0.7)
 	love.graphics.setFont(fonts.title)

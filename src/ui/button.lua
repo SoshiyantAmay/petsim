@@ -6,7 +6,7 @@ local Button = {}
 -- Load icons
 local exitIcon = love.graphics.newImage("assets/icons/exit.png")
 local cartIcon = love.graphics.newImage("assets/icons/cart.png")
-local nextdayIcon = love.graphics.newImage("assets/icons/day-and-night.png")
+local nextdayIcon = love.graphics.newImage("assets/icons/next-day.png")
 
 Button.buttons = {
 	{ text = "Next Day", action = "nextday", icon = nextdayIcon },

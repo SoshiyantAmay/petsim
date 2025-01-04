@@ -6,7 +6,7 @@ function Fonts.load()
 	-- Dialog
 	Fonts.dialog = love.graphics.newFont("assets/fonts/Rajdhani-Regular.ttf", 15)
 	-- Pixel font for title
-	Fonts.title = love.graphics.newFont("assets/fonts/Righteous-Regular.ttf", 20)
+	Fonts.title = love.graphics.newFont("assets/fonts/Righteous-Regular.ttf", 28)
 	-- Pet status
 	Fonts.status = love.graphics.newFont("assets/fonts/Rajdhani-Medium.ttf", 13)
 	-- Buttons

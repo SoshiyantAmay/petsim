@@ -1,184 +1,185 @@
-local Constants = require "src.ui.constants"
+local Constants = require("src.ui.constants")
 
 local Shop = {}
 
 Shop.actions = {
-  { text = "Feed", action = "feed" },
-  { text = "Rest", action = "rest" },
-  { text = "Play", action = "play" },
-  { text = "Train", action = "train" },
-  { text = "Cuddle", action = "cuddle" },
-  { text = "Groom", action = "groom" },
-  { text = "Treat", action = "treat" },
-  { text = "Medicine", action = "medicine" },
-  { text = "Vitamins", action = "vitamins" },
-  { text = "Exercise", action = "exercise" },
-  { text = "Close", action = "close", alwaysEnabled = true },
+	{ text = "Feed", action = "feed", icon = love.graphics.newImage("assets/icons/feed.png") },
+	{ text = "Rest", action = "rest", icon = love.graphics.newImage("assets/icons/rest.png") },
+	{ text = "Play", action = "play", icon = love.graphics.newImage("assets/icons/play.png") },
+	{ text = "Train", action = "train", icon = love.graphics.newImage("assets/icons/train.png") },
+	{ text = "Cuddle", action = "cuddle", icon = love.graphics.newImage("assets/icons/cuddle.png") },
+	{ text = "Groom", action = "groom", icon = love.graphics.newImage("assets/icons/groom.png") },
+	{ text = "Treat", action = "treat", icon = love.graphics.newImage("assets/icons/treat.png") },
+	{ text = "Medicine", action = "medicine", icon = love.graphics.newImage("assets/icons/medicine.png") },
+	{ text = "Vitamins", action = "vitamins", icon = love.graphics.newImage("assets/icons/vitamins.png") },
+	{ text = "Exercise", action = "exercise", icon = love.graphics.newImage("assets/icons/exercise.png") },
 }
 
--- Constants for the shop window
 Shop.WINDOW_PADDING = 20
-Shop.POPUP_WIDTH = 300
-Shop.POPUP_HEIGHT = 400
-Shop.BUTTON_WIDTH = 120
-Shop.BUTTON_HEIGHT = 25
-Shop.BUTTON_PADDING = 10
-
--- Colors for the shop window
-local Colors = {
-  window = { 0.1, 0.1, 0.1, 0.9 },
-  enabled = {
-    background = { 0.2, 0.2, 0.2, 0.8 },
-    border = { 0.5, 0.5, 0.5, 0.8 },
-    text = { 1, 1, 1, 1 },
-  },
-  disabled = {
-    background = { 0.8, 0.8, 0.8, 0.5 },
-    border = { 0.7, 0.7, 0.7, 0.5 },
-    text = { 0.5, 0.5, 0.5, 0.8 },
-  },
+Shop.POPUP_WIDTH = 400
+Shop.POPUP_HEIGHT = 500
+Shop.RADIO_SIZE = 8
+Shop.RADIO_SPACING_X = 200
+Shop.RADIO_SPACING_Y = 60
+Shop.ICON_SIZE = 45
+Shop.ICON_PADDING = 10
+Shop.BUY_BUTTON = {
+	width = 120,
+	height = 30,
 }
+
+local Colors = {
+	window = { 0.1, 0.1, 0.1, 0.8 },
+	enabled = { 1, 1, 1, 1 },
+	disabled = { 0.5, 0.5, 0.5, 0.8 },
+}
+
+local selectedAction = nil
 
 function Shop.draw(gameState, fonts)
-  if not gameState.showShop then
-    return
-  end
+	if not gameState.showShop then
+		return
+	end
 
-  -- Calculate window position (centered)
-  local windowX = (Constants.WINDOW_WIDTH - Shop.POPUP_WIDTH) / 2
-  local windowY = (Constants.WINDOW_HEIGHT - Shop.POPUP_HEIGHT) / 2
+	local windowX = (Constants.WINDOW_WIDTH - Shop.POPUP_WIDTH) / 2
+	local windowY = (Constants.WINDOW_HEIGHT - Shop.POPUP_HEIGHT) / 2
 
-  -- Draw semi-transparent background overlay
-  love.graphics.setColor(0, 0, 0, 0.5)
-  love.graphics.rectangle("fill", 0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)
+	-- Draw shop window full window overlay
+	love.graphics.setColor(0, 0, 0, 0.5)
+	love.graphics.rectangle("fill", 0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)
 
-  -- Draw shop window background
-  love.graphics.setColor(unpack(Colors.window))
-  love.graphics.rectangle("fill", windowX, windowY, Shop.POPUP_WIDTH, Shop.POPUP_HEIGHT, 10)
+	love.graphics.setColor(unpack(Colors.window))
+	love.graphics.rectangle("fill", windowX, windowY, Shop.POPUP_WIDTH, Shop.POPUP_HEIGHT, 10)
 
-  -- Draw title
-  love.graphics.setFont(fonts.title)
-  love.graphics.setColor(1, 1, 1, 1)
-  love.graphics.printf("Pet Actions", windowX, windowY + 20, Shop.POPUP_WIDTH, "center")
+	love.graphics.setFont(fonts.title)
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.printf("Pet Action Shop", windowX, windowY + 10, Shop.POPUP_WIDTH, "center")
 
-  -- Draw buttons
-  love.graphics.setFont(fonts.button)
-  local startY = windowY + 70
-  local buttonsPerRow = 2
-  local buttonSpacing = (Shop.POPUP_WIDTH - (Shop.BUTTON_WIDTH * buttonsPerRow) - (Shop.WINDOW_PADDING * 2))
-    / (buttonsPerRow - 1)
+	love.graphics.setFont(fonts.button)
+	local startY = windowY + 70
+	local itemsPerCol = 5
+	local numColumns = 2
 
-  for i, action in ipairs(Shop.actions) do
-    local row = math.floor((i - 1) / buttonsPerRow)
-    local col = (i - 1) % buttonsPerRow
+	for i, action in ipairs(Shop.actions) do
+		local col = math.floor((i - 1) / itemsPerCol)
+		local row = (i - 1) % itemsPerCol
 
-    local x = windowX + Shop.WINDOW_PADDING + (col * (Shop.BUTTON_WIDTH + buttonSpacing))
-    local y = startY + (row * (Shop.BUTTON_HEIGHT + Shop.BUTTON_PADDING))
+		local x = windowX + Shop.POPUP_WIDTH / 2 + (col - 0.5) * Shop.RADIO_SPACING_X - Shop.RADIO_SIZE
+		local y = startY + row * Shop.RADIO_SPACING_Y
 
-    -- Special case for the Close button - center it at the bottom
-    if action.action == "close" then
-      x = windowX + (Shop.POPUP_WIDTH - Shop.BUTTON_WIDTH) / 2
-      y = windowY + Shop.POPUP_HEIGHT - Shop.BUTTON_HEIGHT - 20
-    end
+		local isDisabled = not gameState.pet.is_alive
+		love.graphics.setColor(isDisabled and Colors.disabled or Colors.enabled)
 
-    local isDisabled = not action.alwaysEnabled and not gameState.pet.is_alive
+		-- Draw icon
+		local iconScale = Shop.ICON_SIZE / action.icon:getWidth()
+		love.graphics.draw(
+			action.icon,
+			x - Shop.ICON_SIZE - Shop.ICON_PADDING,
+			y - Shop.ICON_SIZE / 2 + Shop.RADIO_SIZE,
+			0,
+			iconScale,
+			iconScale
+		)
 
-    -- Draw button background
-    if isDisabled then
-      love.graphics.setColor(unpack(Colors.disabled.background))
-    else
-      love.graphics.setColor(unpack(Colors.enabled.background))
-    end
-    love.graphics.rectangle("fill", x, y, Shop.BUTTON_WIDTH, Shop.BUTTON_HEIGHT, 5)
+		-- Radio circle
+		love.graphics.circle("line", x + Shop.RADIO_SIZE, y, Shop.RADIO_SIZE)
 
-    -- Draw button border
-    if isDisabled then
-      love.graphics.setColor(unpack(Colors.disabled.border))
-    else
-      love.graphics.setColor(unpack(Colors.enabled.border))
-    end
-    love.graphics.rectangle("line", x, y, Shop.BUTTON_WIDTH, Shop.BUTTON_HEIGHT, 5)
+		if selectedAction == action.action then
+			love.graphics.circle("fill", x + Shop.RADIO_SIZE, y, Shop.RADIO_SIZE - 3)
+		end
 
-    -- Draw button text
-    if isDisabled then
-      love.graphics.setColor(unpack(Colors.disabled.text))
-    else
-      love.graphics.setColor(unpack(Colors.enabled.text))
-    end
-    local textWidth = fonts.button:getWidth(action.text)
-    local textX = x + (Shop.BUTTON_WIDTH - textWidth) / 2
-    local textY = y + (Shop.BUTTON_HEIGHT - fonts.button:getHeight()) / 2
-    love.graphics.print(action.text, textX, textY)
-  end
+		love.graphics.print(action.text, x, y + Shop.RADIO_SIZE + 5)
+	end
+
+	local buttonX = windowX + (Shop.POPUP_WIDTH - Shop.BUY_BUTTON.width) / 2
+	local buttonY = windowY + Shop.POPUP_HEIGHT - Shop.BUY_BUTTON.height - 20
+
+	-- Draw 'Buy' button
+	love.graphics.setColor(0.2, 0.2, 0.2, selectedAction and 1 or 0.5)
+	love.graphics.rectangle("fill", buttonX, buttonY, Shop.BUY_BUTTON.width, Shop.BUY_BUTTON.height, 5)
+	love.graphics.setColor(1, 1, 1, selectedAction and 1 or 0.5)
+	love.graphics.printf("Buy", buttonX, buttonY + 5, Shop.BUY_BUTTON.width, "center")
+
+	-- Draw window 'x' button
+	love.graphics.setColor(1, 1, 1, 0.8)
+	local closeX = windowX + Shop.POPUP_WIDTH - 30
+	local closeY = windowY + 10
+	love.graphics.print("×", closeX, closeY)
 end
 
 function Shop.handleClick(x, y, gameState)
-  if not gameState.showShop then
-    return false
-  end
+	if not gameState.showShop then
+		return false
+	end
 
-  local windowX = (Constants.WINDOW_WIDTH - Shop.POPUP_WIDTH) / 2
-  local windowY = (Constants.WINDOW_HEIGHT - Shop.POPUP_HEIGHT) / 2
-  local startY = windowY + 70
-  local buttonsPerRow = 2
-  local buttonSpacing = (Shop.POPUP_WIDTH - (Shop.BUTTON_WIDTH * buttonsPerRow) - (Shop.WINDOW_PADDING * 2))
-    / (buttonsPerRow - 1)
+	local windowX = (Constants.WINDOW_WIDTH - Shop.POPUP_WIDTH) / 2
+	local windowY = (Constants.WINDOW_HEIGHT - Shop.POPUP_HEIGHT) / 2
 
-  for i, action in ipairs(Shop.actions) do
-    local row = math.floor((i - 1) / buttonsPerRow)
-    local col = (i - 1) % buttonsPerRow
+	local closeX = windowX + Shop.POPUP_WIDTH - 30
+	local closeY = windowY + 10
+	if x >= closeX and x <= closeX + 20 and y >= closeY and y <= closeY + 20 then
+		gameState.showShop = false
+		return true
+	end
 
-    local buttonX = windowX + Shop.WINDOW_PADDING + (col * (Shop.BUTTON_WIDTH + buttonSpacing))
-    local buttonY = startY + (row * (Shop.BUTTON_HEIGHT + Shop.BUTTON_PADDING))
+	local startY = windowY + 70
+	local itemsPerCol = 5
+	local numColumns = 2
 
-    -- Special case for the Close button
-    if action.action == "close" then
-      buttonX = windowX + (Shop.POPUP_WIDTH - Shop.BUTTON_WIDTH) / 2
-      buttonY = windowY + Shop.POPUP_HEIGHT - Shop.BUTTON_HEIGHT - 20
-    end
+	for i, action in ipairs(Shop.actions) do
+		local col = math.floor((i - 1) / itemsPerCol)
+		local row = (i - 1) % itemsPerCol
 
-    local isDisabled = not action.alwaysEnabled and not gameState.pet.is_alive
+		local radioX = windowX + Shop.POPUP_WIDTH / 2 + (col - 0.5) * Shop.RADIO_SPACING_X - Shop.RADIO_SIZE
+		local radioY = startY + row * Shop.RADIO_SPACING_Y
 
-    if
-      not isDisabled
-      and x >= buttonX
-      and x <= buttonX + Shop.BUTTON_WIDTH
-      and y >= buttonY
-      and y <= buttonY + Shop.BUTTON_HEIGHT
-    then
-      if action.action == "close" then
-        gameState.showShop = false
-      elseif action.action == "feed" then
-        gameState.pet:feed()
-      elseif action.action == "rest" then
-        gameState.pet:rest()
-      elseif action.action == "play" then
-        gameState.pet:play()
-      elseif action.action == "medicine" then
-        gameState.pet:give_medicine()
-      elseif action.action == "treat" then
-        gameState.pet:give_treat()
-      elseif action.action == "exercise" then
-        gameState.pet:exercise()
-      elseif action.action == "vitamins" then
-        gameState.pet:give_vitamins()
-      elseif action.action == "train" then
-        gameState.pet:train()
-      elseif action.action == "cuddle" then
-        gameState.pet:cuddle()
-      elseif action.action == "groom" then
-        gameState.pet:groom()
-      end
+		local dx = x - (radioX + Shop.RADIO_SIZE)
+		local dy = y - radioY
 
-      if action.action ~= "close" then
-        gameState.pet:check_death()
-        gameState.game:save()
-      end
+		if dx * dx + dy * dy <= Shop.RADIO_SIZE * Shop.RADIO_SIZE then
+			selectedAction = action.action
+			return true
+		end
+	end
 
-      return true
-    end
-  end
-  return false
+	local buttonX = windowX + (Shop.POPUP_WIDTH - Shop.BUY_BUTTON.width) / 2
+	local buttonY = windowY + Shop.POPUP_HEIGHT - Shop.BUY_BUTTON.height - 20
+
+	if
+		selectedAction
+		and x >= buttonX
+		and x <= buttonX + Shop.BUY_BUTTON.width
+		and y >= buttonY
+		and y <= buttonY + Shop.BUY_BUTTON.height
+	then
+		if selectedAction == "feed" then
+			gameState.pet:feed()
+		elseif selectedAction == "rest" then
+			gameState.pet:rest()
+		elseif selectedAction == "play" then
+			gameState.pet:play()
+		elseif selectedAction == "medicine" then
+			gameState.pet:give_medicine()
+		elseif selectedAction == "treat" then
+			gameState.pet:give_treat()
+		elseif selectedAction == "exercise" then
+			gameState.pet:exercise()
+		elseif selectedAction == "vitamins" then
+			gameState.pet:give_vitamins()
+		elseif selectedAction == "train" then
+			gameState.pet:train()
+		elseif selectedAction == "cuddle" then
+			gameState.pet:cuddle()
+		elseif selectedAction == "groom" then
+			gameState.pet:groom()
+		end
+
+		gameState.pet:check_death()
+		gameState.game:save()
+		return true
+	end
+
+	return false
 end
 
 return Shop

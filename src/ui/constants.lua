@@ -10,8 +10,8 @@ local Constants = {
 	BUTTON_WIDTH = 110,
 	BUTTON_HEIGHT = 45,
 	BUTTON_PADDING = 10,
-	BUTTON_ICON_PADDING = 38, -- Padding for icons inside buttons
+	BUTTON_ICON_PADDING = 35, -- Padding for icons inside buttons (determines the icon size)
 	BUTTONS_START_X = 580, -- WINDOW_WIDTH - 120
-	BUTTONS_START_Y = 40,
+	BUTTONS_START_Y = 130,
 }
 return Constants

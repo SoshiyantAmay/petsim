@@ -70,7 +70,7 @@ function love.draw()
 	Draw.petInfo(gameState, fonts)
 	Draw.stats(gameState, fonts)
 	Draw.buttons(gameState, fonts)
-	Draw.wallet(gameState, fonts)
+	Draw.coins(gameState, fonts)
 
 	if Utils.isNaming then
 		Utils.handleTextInput(fonts)

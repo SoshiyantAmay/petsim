@@ -27,8 +27,7 @@
 │       ├── rip.png
 │       ├── train.png
 │       ├── treat.png
-│       ├── vitamins.png
-│       └── wallet.png
+│       └── vitamins.png
 ├── config.lua
 ├── data
 │   └── pets.json
@@ -56,4 +55,4 @@
     ├── pet-logic.md
     └── proj_struct.txt
 
-10 directories, 47 files
+10 directories, 46 files

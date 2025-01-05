@@ -1,4 +1,5 @@
 local Constants = require("src.ui.constants")
+local Actions = require("src.game.actions")
 
 local Shop = {}
 
@@ -26,7 +27,7 @@ Shop.RADIO_SPACING_X = 180
 Shop.RADIO_SPACING_Y = 60
 Shop.ICON_SIZE = 45
 Shop.ICON_PADDING = 10
-Shop.COIN_COLUMN_OFFSET = 60 -- New constant for coin alignment
+Shop.COIN_COLUMN_OFFSET = 60
 Shop.BUY_BUTTON = {
 	width = 120,
 	height = 30,
@@ -36,10 +37,35 @@ local Colors = {
 	window = { 0.1, 0.1, 0.1, 0.8 },
 	enabled = { 1, 1, 1, 1 },
 	disabled = { 0.5, 0.5, 0.5, 0.8 },
-	coins = { 1, 0.84, 0, 1 }, -- Gold color for coins
+	coins = { 1, 0.84, 0, 1 },
+	positive = { 0.2, 0.8, 0.2, 1 },
+	negative = { 0.8, 0.2, 0.2, 1 },
 }
 
 local selectedAction = nil
+
+local function getEffectsText(action)
+	local effects = Actions[action]
+	local text = ""
+
+	if effects.health ~= 0 then
+		text = text .. string.format("Health: %+d  ", effects.health)
+	end
+	if effects.hunger ~= 0 then
+		text = text .. string.format("Hunger: %+d  ", effects.hunger)
+	end
+	if effects.happiness ~= 0 then
+		text = text .. string.format("Happiness: %+d  ", effects.happiness)
+	end
+	if effects.energy ~= 0 then
+		text = text .. string.format("Energy: %+d  ", effects.energy)
+	end
+	if effects.intelligence ~= 0 then
+		text = text .. string.format("Intelligence: %+d", effects.intelligence)
+	end
+
+	return text
+end
 
 function Shop.draw(gameState, fonts)
 	if not gameState.showShop then
@@ -66,7 +92,7 @@ function Shop.draw(gameState, fonts)
 
 	love.graphics.setFont(fonts.button)
 	love.graphics.setColor(unpack(Colors.coins))
-	love.graphics.printf("Wallet $" .. gameState.pet.coins, windowX, windowY + 45, Shop.POPUP_WIDTH, "center")
+	love.graphics.printf("Coins $" .. gameState.pet.coins, windowX, windowY + 45, Shop.POPUP_WIDTH, "center")
 	love.graphics.draw(coinIcon, windowX + 236, windowY + 47, 0, coinScale, coinScale)
 
 	love.graphics.setFont(fonts.button)
@@ -119,21 +145,26 @@ function Shop.draw(gameState, fonts)
 		)
 	end
 
-	-- Draw buy button and related UI
-	local buttonX = windowX + (Shop.POPUP_WIDTH - Shop.BUY_BUTTON.width) / 2
-	local buttonY = windowY + Shop.POPUP_HEIGHT - Shop.BUY_BUTTON.height - 20
-
+	-- Draw effects text if action is selected
 	if selectedAction then
+		love.graphics.setColor(1, 1, 1, 1)
+		local effectsText = getEffectsText(selectedAction)
+		love.graphics.printf(effectsText, windowX, windowY + Shop.POPUP_HEIGHT - 100, Shop.POPUP_WIDTH, "center")
+
+		-- Draw total cost
 		love.graphics.setColor(unpack(Colors.coins))
 		local costText = "Total $" .. gameState.pet.action_costs[selectedAction]
 		local textWidth = fonts.button:getWidth(costText)
 		local centerX = windowX + Shop.POPUP_WIDTH / 2
 
-		love.graphics.print(costText, centerX - textWidth / 2 - 5, buttonY - 25)
-		love.graphics.draw(coinIcon, centerX + textWidth / 2, buttonY - 23, 0, coinScale, coinScale)
+		love.graphics.print(costText, centerX - textWidth / 2 - 5, windowY + Shop.POPUP_HEIGHT - 75)
+		love.graphics.draw(coinIcon, centerX + textWidth / 2, windowY + Shop.POPUP_HEIGHT - 73, 0, coinScale, coinScale)
 	end
 
 	-- Buy button
+	local buttonX = windowX + (Shop.POPUP_WIDTH - Shop.BUY_BUTTON.width) / 2
+	local buttonY = windowY + Shop.POPUP_HEIGHT - Shop.BUY_BUTTON.height - 20
+
 	local canBuy = selectedAction and gameState.pet.coins >= gameState.pet.action_costs[selectedAction]
 	love.graphics.setColor(0.2, 0.2, 0.2, canBuy and 1 or 0.5)
 	love.graphics.rectangle("fill", buttonX, buttonY, Shop.BUY_BUTTON.width, Shop.BUY_BUTTON.height, 5)
@@ -233,3 +264,4 @@ function Shop.handleClick(x, y, gameState)
 end
 
 return Shop
+

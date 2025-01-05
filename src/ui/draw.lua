@@ -2,8 +2,7 @@ local Constants = require("src.ui.constants")
 local Button = require("src.ui.button")
 local Stats = require("src.ui.stats")
 
-local coinIcon = love.graphics.newImage("assets/icons/coin.png")
-local walletIcon = love.graphics.newImage("assets/icons/wallet.png")
+local coinsIcon = love.graphics.newImage("assets/icons/coins.png")
 
 local Draw = {}
 
@@ -84,37 +83,29 @@ function Draw.buttons(gameState, fonts)
 	Button.drawAll(gameState) -- This will use the proper button drawing with disabled states
 end
 
-function Draw.wallet(gameState, fonts)
-	local coinScale = (28 / coinIcon:getWidth())
-	local walletScale = (72 / walletIcon:getWidth())
+function Draw.coins(gameState, fonts)
+	local coinsScale = (35 / coinsIcon:getWidth())
 
-	-- Match pet info box height and position
-	local boxHeight = 110 -- Same as pet info box
-	local backgroundWidth = 200
-	local padding = 10 -- Reduced padding to be closer to pet info
-	local backgroundX = Constants.WINDOW_WIDTH - backgroundWidth - padding
-	local backgroundY = Constants.STATS_Y - Constants.STATUS_BOX_PADDING
+	-- Match title height and position
+	local boxHeight = 40 -- Same as pet info box
+	local boxWidth = 110
+	local boxX = 10
+	local boxY = 10
 
-	-- Draw wallet background with same opacity and roundness
+	-- Draw coins box with same opacity and roundness
 	love.graphics.setColor(0, 0, 0, 0.35) -- Match pet info opacity
-	love.graphics.rectangle("fill", backgroundX, backgroundY, backgroundWidth, boxHeight, 5)
+	love.graphics.rectangle("fill", boxX, boxY, boxWidth, boxHeight, 5)
 
-	-- Center wallet vertically in the box
-	local walletY = backgroundY + (boxHeight - walletIcon:getHeight() * walletScale) / 2
-
-	-- Draw wallet icon and text
+	-- Draw coins icon and text
 	love.graphics.setColor(1, 0.75, 0.2, 1)
-	love.graphics.setFont(fonts.wallet)
-	local walletText = gameState.pet.coins
+	love.graphics.setFont(fonts.coins)
+	local coinsText = gameState.pet.coins
 
 	-- Draw icon
-	love.graphics.draw(walletIcon, backgroundX + 10, walletY, 0, walletScale, walletScale)
+	love.graphics.draw(coinsIcon, boxX + 7, boxY + 2, 0, coinsScale, coinsScale)
 
 	-- Draw text after icon
-	love.graphics.print(walletText, backgroundX + walletIcon:getWidth() * walletScale + 60, walletY + 25)
-
-	-- Draw coin icon after text
-	love.graphics.draw(coinIcon, backgroundX + walletScale + 100, walletY + 30, 0, coinScale, coinScale)
+	love.graphics.print(coinsText, boxX + 50, 12)
 end
 
 return Draw

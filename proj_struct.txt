@@ -14,6 +14,7 @@
 │   └── icons
 │       ├── cart.png
 │       ├── coin.png
+│       ├── coins.png
 │       ├── cuddle.png
 │       ├── exercise.png
 │       ├── exit.png
@@ -23,10 +24,11 @@
 │       ├── next-day.png
 │       ├── play.png
 │       ├── rest.png
+│       ├── rip.png
 │       ├── train.png
 │       ├── treat.png
-│       └── vitamins.png
-├── conf.lua
+│       ├── vitamins.png
+│       └── wallet.png
 ├── config.lua
 ├── data
 │   └── pets.json
@@ -49,5 +51,9 @@
 │   │   └── stats.lua
 │   └── utils.lua
 ├── todo.txt
+└── txt
+    ├── claude.txt
+    ├── pet-logic.md
+    └── proj_struct.txt
 
-10 directories, 45 files
+10 directories, 47 files

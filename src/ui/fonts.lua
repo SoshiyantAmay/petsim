@@ -12,7 +12,7 @@ function Fonts.load()
 	-- Buttons
 	Fonts.button = love.graphics.newFont("assets/fonts/Rajdhani-Medium.ttf", 15)
 	-- Wallet (Main)
-	Fonts.wallet = love.graphics.newFont("assets/fonts/Rajdhani-Medium.ttf", 25)
+	Fonts.wallet = love.graphics.newFont("assets/fonts/Rajdhani-SemiBold.ttf", 28)
 	return Fonts
 end
 

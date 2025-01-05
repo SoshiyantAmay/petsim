@@ -1,16 +1,17 @@
 local Constants = require("src.ui.constants")
-local GameState = require("src.game.state")
 
 local Button = {}
 
 -- Load icons
-local exitIcon = love.graphics.newImage("assets/icons/exit.png")
-local cartIcon = love.graphics.newImage("assets/icons/cart.png")
 local nextdayIcon = love.graphics.newImage("assets/icons/next-day.png")
+local cartIcon = love.graphics.newImage("assets/icons/cart.png")
+local ripIcon = love.graphics.newImage("assets/icons/rip.png")
+local exitIcon = love.graphics.newImage("assets/icons/exit.png")
 
 Button.buttons = {
 	{ text = "Next Day", action = "nextday", icon = nextdayIcon },
 	{ text = "Shop", action = "shop", icon = cartIcon },
+	{ text = "R.I.P", action = "rip", icon = ripIcon },
 	{ text = "Exit", action = "exit", icon = exitIcon, alwaysEnabled = true },
 }
 

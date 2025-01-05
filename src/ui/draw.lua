@@ -3,6 +3,7 @@ local Button = require("src.ui.button")
 local Stats = require("src.ui.stats")
 
 local coinIcon = love.graphics.newImage("assets/icons/coin.png")
+local walletIcon = love.graphics.newImage("assets/icons/wallet.png")
 
 local Draw = {}
 
@@ -19,14 +20,14 @@ function Draw.background(backgroundImage)
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.draw(backgroundImage, bgX, bgY, 0, scale, scale)
 
-	-- Overlay
-	love.graphics.setColor(0, 0, 0, 0.3)
+	-- Overlay for better visibility
+	love.graphics.setColor(0, 0, 0, 0.2)
 	love.graphics.rectangle("fill", 0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)
 end
 
 function Draw.title(gameState, fonts)
 	love.graphics.setColor(0, 0, 0, 0.35)
-	love.graphics.rectangle("fill", Constants.WINDOW_WIDTH / 4, 10, Constants.WINDOW_WIDTH / 2, 40)
+	love.graphics.rectangle("fill", Constants.WINDOW_WIDTH / 4, 10, Constants.WINDOW_WIDTH / 2, 40, 5)
 
 	love.graphics.setColor(1, 1, 1, 0.7)
 	love.graphics.setFont(fonts.title)
@@ -41,16 +42,15 @@ function Draw.petInfo(gameState, fonts)
 		10,
 		Constants.STATS_Y - Constants.STATUS_BOX_PADDING,
 		Constants.BAR_WIDTH + 150,
-		95 -- Adjusted height to accommodate all content
+		110, -- Adjusted height to accommodate all content
+		5
 	)
 
 	love.graphics.setColor(1, 1, 1)
 	love.graphics.setFont(fonts.status)
 	local status = gameState.pet:get_status()
-	--
-	-- Format difficulty with first letter capitalized
-	local difficulty = status.difficulty:sub(1, 1):upper() .. status.difficulty:sub(2)
 
+	-- Print pet status info bar
 	love.graphics.print(
 		status.name
 			.. " ("
@@ -61,7 +61,7 @@ function Draw.petInfo(gameState, fonts)
 			.. status.age
 			.. " days"
 			.. " | Difficulty: "
-			.. difficulty,
+			.. Utils.firstToUpper(status.difficulty), -- Format difficulty level name with first letter capitalized
 		Constants.STATS_X,
 		Constants.STATS_Y - 10
 	)
@@ -76,6 +76,7 @@ function Draw.stats(gameState, fonts)
 	Stats.drawBar("Hunger", status.hunger, baseY + Constants.BAR_PADDING)
 	Stats.drawBar("Happiness", status.happiness, baseY + Constants.BAR_PADDING * 2)
 	Stats.drawBar("Energy", status.energy, baseY + Constants.BAR_PADDING * 3)
+	Stats.drawBar("Intelligence", status.intelligence, baseY + Constants.BAR_PADDING * 4)
 end
 
 function Draw.buttons(gameState, fonts)
@@ -84,13 +85,36 @@ function Draw.buttons(gameState, fonts)
 end
 
 function Draw.wallet(gameState, fonts)
-	local coinScale = 22 / coinIcon:getWidth()
-	love.graphics.setColor(1, 0.75, 0.2, 1) -- Gold color
+	local coinScale = (28 / coinIcon:getWidth())
+	local walletScale = (72 / walletIcon:getWidth())
+
+	-- Match pet info box height and position
+	local boxHeight = 110 -- Same as pet info box
+	local backgroundWidth = 200
+	local padding = 10 -- Reduced padding to be closer to pet info
+	local backgroundX = Constants.WINDOW_WIDTH - backgroundWidth - padding
+	local backgroundY = Constants.STATS_Y - Constants.STATUS_BOX_PADDING
+
+	-- Draw wallet background with same opacity and roundness
+	love.graphics.setColor(0, 0, 0, 0.35) -- Match pet info opacity
+	love.graphics.rectangle("fill", backgroundX, backgroundY, backgroundWidth, boxHeight, 5)
+
+	-- Center wallet vertically in the box
+	local walletY = backgroundY + (boxHeight - walletIcon:getHeight() * walletScale) / 2
+
+	-- Draw wallet icon and text
+	love.graphics.setColor(1, 0.75, 0.2, 1)
 	love.graphics.setFont(fonts.wallet)
-	local walletText = "Wallet $" .. gameState.pet.coins
-	local textWidth = fonts.wallet:getWidth(walletText)
-	love.graphics.print(walletText, 10, 15)
-	love.graphics.draw(coinIcon, 15 + textWidth, 19, 0, coinScale, coinScale)
+	local walletText = gameState.pet.coins
+
+	-- Draw icon
+	love.graphics.draw(walletIcon, backgroundX + 10, walletY, 0, walletScale, walletScale)
+
+	-- Draw text after icon
+	love.graphics.print(walletText, backgroundX + walletIcon:getWidth() * walletScale + 60, walletY + 25)
+
+	-- Draw coin icon after text
+	love.graphics.draw(coinIcon, backgroundX + walletScale + 100, walletY + 30, 0, coinScale, coinScale)
 end
 
 return Draw

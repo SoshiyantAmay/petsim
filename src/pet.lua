@@ -11,13 +11,13 @@ function Pet.new(name, species, difficulty)
 	self.species = species or "Generic"
 	self.difficulty = difficulty or "normal"
 
-	-- Core attributes with configuration
+	-- Pet's core attributes with configuration
 	self.hunger = new_pet_config.hunger
 	self.happiness = new_pet_config.happiness
 	self.energy = new_pet_config.energy
 	self.age = 0
 	self.health = new_pet_config.health
-	self.intelligence = 0
+	self.intelligence = new_pet_config.intelligence
 	self.coins = new_pet_config.coins
 
 	-- Action costs
@@ -35,10 +35,10 @@ function Pet.new(name, species, difficulty)
 	}
 
 	-- Configuration modifiers
-	self.species_bonus = species_config
+	self.species_modifier = species_config
 	self.difficulty_modifier = difficulty_config
 
-	-- Tracking flags
+	-- Pet's status tracking flags
 	self.is_alive = true
 	self.death_reason = nil
 	self.death_age = nil
@@ -90,8 +90,8 @@ function Pet:play()
 		return false
 	end
 
-	local happiness_gain = self.species_bonus.base_happiness_gain
-	local energy_cost = self.species_bonus.base_energy_cost
+	local happiness_gain = self.species_modifier.base_happiness_gain
+	local energy_cost = self.species_modifier.base_energy_cost
 	local decay_rate = self.difficulty_modifier.stat_decay_rate
 
 	self.happiness = math.min(100, self.happiness + happiness_gain * decay_rate)
@@ -114,18 +114,23 @@ function Pet:rest()
 	return true
 end
 
--- Age the pet
+-- Age up the pet
+-- Age up should affect intelligence
 function Pet:age_up()
 	local decay_rate = self.difficulty_modifier.stat_decay_rate
 	local age_penalty = self.difficulty_modifier.age_penalty
 
 	self.age = self.age + 1
+
+	-- Age up gets bonus for being alive!
 	self.coins = self.coins + Config.daily_allowance
 
 	-- Decrease attributes over time
 	self.hunger = math.max(0, self.hunger - 5 * decay_rate * age_penalty)
 	self.energy = math.max(0, self.energy - 5 * decay_rate * age_penalty)
 	self.happiness = math.max(0, self.happiness - 5 * decay_rate * age_penalty)
+	-- Intelligence decays slower than other stats
+	self.intelligence = math.max(0, self.intelligence - 2 * decay_rate * age_penalty)
 end
 
 -- Get pet status
@@ -139,6 +144,7 @@ function Pet:get_status()
 		energy = self.energy,
 		age = self.age,
 		health = self.health,
+		intelligence = self.intelligence,
 		is_alive = self.is_alive,
 		death_reason = self.death_reason,
 		death_age = self.death_age,
@@ -173,9 +179,14 @@ function Pet:train()
 		return false
 	end
 
+	local intelligence_gain = self.species_modifier.intelligence_gain * self.difficulty_modifier.intelligence_modifier
+
+	self.intelligence = math.min(100, self.intelligence + intelligence_gain)
 	self.energy = math.max(0, self.energy - 15 * self.difficulty_modifier.stat_decay_rate)
 	self.hunger = math.max(0, self.hunger - 10 * self.difficulty_modifier.stat_decay_rate)
-	-- Could add a skills/experience system
+
+	-- Could add a skills/experience feature
+
 	return true
 end
 

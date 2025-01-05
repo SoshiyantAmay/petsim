@@ -5,6 +5,7 @@
 5- Simple how to play game (help).
 6- Add Pets Grave Yard Leaderboard! (Sort/Search/Recusrion?)
 7- Add intelligence to the pet attributes
+8- Add vitas icon to the pet info status box
 
 Action      $ (Coin)        Health      Hunger      Happiness       Energy
 Idle        -               -           -           -               -

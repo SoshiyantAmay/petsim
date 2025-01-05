@@ -3,7 +3,7 @@ Pet.__index = Pet
 
 function Pet.new(name, species, difficulty)
 	local self = setmetatable({}, Pet)
-	local config = Config.initial_pet_stats
+	local new_pet_config = Config.initial_pet_stats
 	local species_config = Config.species[species:lower()] or Config.species.generic
 	local difficulty_config = Config.difficulty[difficulty or "normal"]
 
@@ -12,11 +12,27 @@ function Pet.new(name, species, difficulty)
 	self.difficulty = difficulty or "normal"
 
 	-- Core attributes with configuration
-	self.hunger = config.hunger
-	self.happiness = config.happiness
-	self.energy = config.energy
+	self.hunger = new_pet_config.hunger
+	self.happiness = new_pet_config.happiness
+	self.energy = new_pet_config.energy
 	self.age = 0
-	self.health = config.health
+	self.health = new_pet_config.health
+	self.intelligence = 0
+	self.coins = new_pet_config.coins
+
+	-- Action costs
+	self.action_costs = {
+		feed = 2,
+		rest = 1,
+		play = 3,
+		train = 4,
+		cuddle = 1,
+		groom = 2,
+		treat = 2,
+		medicine = 5,
+		vitamins = 4,
+		exercise = 3,
+	}
 
 	-- Configuration modifiers
 	self.species_bonus = species_config
@@ -104,6 +120,7 @@ function Pet:age_up()
 	local age_penalty = self.difficulty_modifier.age_penalty
 
 	self.age = self.age + 1
+	self.coins = self.coins + Config.daily_allowance
 
 	-- Decrease attributes over time
 	self.hunger = math.max(0, self.hunger - 5 * decay_rate * age_penalty)

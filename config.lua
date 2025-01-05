@@ -4,7 +4,7 @@ local config = {
 		happiness = 50,
 		energy = 100,
 		health = 100,
-		-- coins = 10
+		coins = 10, -- Initial coins for new pets
 	},
 	species = {
 		dog = {
@@ -34,6 +34,7 @@ local config = {
 			age_penalty = 1.2,
 		},
 	},
+	daily_allowance = 10,
 }
 
 return setmetatable(config, {

@@ -2,6 +2,8 @@ local Constants = require("src.ui.constants")
 local Button = require("src.ui.button")
 local Stats = require("src.ui.stats")
 
+local coinIcon = love.graphics.newImage("assets/icons/coin.png")
+
 local Draw = {}
 
 function Draw.background(backgroundImage)
@@ -79,6 +81,16 @@ end
 function Draw.buttons(gameState, fonts)
 	love.graphics.setFont(fonts.button) -- Set fonts once here and button will get it
 	Button.drawAll(gameState) -- This will use the proper button drawing with disabled states
+end
+
+function Draw.wallet(gameState, fonts)
+	local coinScale = 22 / coinIcon:getWidth()
+	love.graphics.setColor(1, 0.75, 0.2, 1) -- Gold color
+	love.graphics.setFont(fonts.wallet)
+	local walletText = "Wallet $" .. gameState.pet.coins
+	local textWidth = fonts.wallet:getWidth(walletText)
+	love.graphics.print(walletText, 10, 15)
+	love.graphics.draw(coinIcon, 15 + textWidth, 19, 0, coinScale, coinScale)
 end
 
 return Draw

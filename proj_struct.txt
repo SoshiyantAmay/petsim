@@ -29,8 +29,7 @@
 ├── conf.lua
 ├── config.lua
 ├── data
-│   ├── pets.json
-│   └── pets.json_
+│   └── pets.json
 ├── lib
 │   └── dkjson.lua
 ├── main.lua
@@ -50,9 +49,5 @@
 │   │   └── stats.lua
 │   └── utils.lua
 ├── todo.txt
-└── txt
-    ├── claude.txt
-    ├── icons.txt
-    └── proj_struct.txt
 
-10 directories, 46 files
+10 directories, 45 files

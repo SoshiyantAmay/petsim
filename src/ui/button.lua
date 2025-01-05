@@ -106,7 +106,6 @@ function Button.handleClick(x, y, gameState)
 			end
 			gameState.pet:check_death()
 			gameState.game:save()
-			GameState.checkPetDeath(gameState)
 		end
 	end
 end

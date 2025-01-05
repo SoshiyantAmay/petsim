@@ -2,6 +2,9 @@ local Constants = require("src.ui.constants")
 
 local Shop = {}
 
+-- Load coin icon
+local coinIcon = love.graphics.newImage("assets/icons/coin.png")
+
 Shop.actions = {
 	{ text = "Feed", action = "feed", icon = love.graphics.newImage("assets/icons/feed.png") },
 	{ text = "Rest", action = "rest", icon = love.graphics.newImage("assets/icons/rest.png") },
@@ -19,10 +22,11 @@ Shop.WINDOW_PADDING = 20
 Shop.POPUP_WIDTH = 400
 Shop.POPUP_HEIGHT = 500
 Shop.RADIO_SIZE = 8
-Shop.RADIO_SPACING_X = 200
+Shop.RADIO_SPACING_X = 180
 Shop.RADIO_SPACING_Y = 60
 Shop.ICON_SIZE = 45
 Shop.ICON_PADDING = 10
+Shop.COIN_COLUMN_OFFSET = 60 -- New constant for coin alignment
 Shop.BUY_BUTTON = {
 	width = 120,
 	height = 30,
@@ -32,6 +36,7 @@ local Colors = {
 	window = { 0.1, 0.1, 0.1, 0.8 },
 	enabled = { 1, 1, 1, 1 },
 	disabled = { 0.5, 0.5, 0.5, 0.8 },
+	coins = { 1, 0.84, 0, 1 }, -- Gold color for coins
 }
 
 local selectedAction = nil
@@ -44,30 +49,38 @@ function Shop.draw(gameState, fonts)
 	local windowX = (Constants.WINDOW_WIDTH - Shop.POPUP_WIDTH) / 2
 	local windowY = (Constants.WINDOW_HEIGHT - Shop.POPUP_HEIGHT) / 2
 
-	-- Draw shop window full window overlay
+	local coinScale = 15 / coinIcon:getWidth()
+
+	-- Draw background overlay
 	love.graphics.setColor(0, 0, 0, 0.5)
 	love.graphics.rectangle("fill", 0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)
 
+	-- Draw shop window
 	love.graphics.setColor(unpack(Colors.window))
 	love.graphics.rectangle("fill", windowX, windowY, Shop.POPUP_WIDTH, Shop.POPUP_HEIGHT, 10)
 
+	-- Draw title and available coins
 	love.graphics.setFont(fonts.title)
 	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.printf("Pet Action Shop", windowX, windowY + 10, Shop.POPUP_WIDTH, "center")
+	love.graphics.printf("Pet Actions", windowX, windowY + 10, Shop.POPUP_WIDTH, "center")
+
+	love.graphics.setFont(fonts.button)
+	love.graphics.setColor(unpack(Colors.coins))
+	love.graphics.printf("Wallet $" .. gameState.pet.coins, windowX, windowY + 45, Shop.POPUP_WIDTH, "center")
+	love.graphics.draw(coinIcon, windowX + 236, windowY + 47, 0, coinScale, coinScale)
 
 	love.graphics.setFont(fonts.button)
 	local startY = windowY + 70
 	local itemsPerCol = 5
-	local numColumns = 2
 
 	for i, action in ipairs(Shop.actions) do
 		local col = math.floor((i - 1) / itemsPerCol)
 		local row = (i - 1) % itemsPerCol
 
 		local x = windowX + Shop.POPUP_WIDTH / 2 + (col - 0.5) * Shop.RADIO_SPACING_X - Shop.RADIO_SIZE
-		local y = startY + row * Shop.RADIO_SPACING_Y
+		local y = startY + row * Shop.RADIO_SPACING_Y + 10
 
-		local isDisabled = not gameState.pet.is_alive
+		local isDisabled = not gameState.pet.is_alive or gameState.pet.coins < gameState.pet.action_costs[action.action]
 		love.graphics.setColor(isDisabled and Colors.disabled or Colors.enabled)
 
 		-- Draw icon
@@ -75,7 +88,7 @@ function Shop.draw(gameState, fonts)
 		love.graphics.draw(
 			action.icon,
 			x - Shop.ICON_SIZE - Shop.ICON_PADDING,
-			y - Shop.ICON_SIZE / 2 + Shop.RADIO_SIZE,
+			y - Shop.ICON_SIZE / 3,
 			0,
 			iconScale,
 			iconScale
@@ -83,24 +96,51 @@ function Shop.draw(gameState, fonts)
 
 		-- Radio circle
 		love.graphics.circle("line", x + Shop.RADIO_SIZE, y, Shop.RADIO_SIZE)
-
 		if selectedAction == action.action then
 			love.graphics.circle("fill", x + Shop.RADIO_SIZE, y, Shop.RADIO_SIZE - 3)
 		end
 
+		-- Action name
 		love.graphics.print(action.text, x, y + Shop.RADIO_SIZE + 5)
+
+		-- Draw cost and coin icon in aligned columns
+		love.graphics.setColor(unpack(Colors.coins))
+		local costX = x + Shop.COIN_COLUMN_OFFSET
+		love.graphics.print(gameState.pet.action_costs[action.action], costX, y + Shop.RADIO_SIZE + 5)
+
+		-- Draw coin icon (aligned in column)
+		love.graphics.draw(
+			coinIcon,
+			costX + fonts.button:getWidth(tostring(gameState.pet.action_costs[action.action])) + 5,
+			y + Shop.RADIO_SIZE + 6,
+			0,
+			coinScale,
+			coinScale
+		)
 	end
 
+	-- Draw buy button and related UI
 	local buttonX = windowX + (Shop.POPUP_WIDTH - Shop.BUY_BUTTON.width) / 2
 	local buttonY = windowY + Shop.POPUP_HEIGHT - Shop.BUY_BUTTON.height - 20
 
-	-- Draw 'Buy' button
-	love.graphics.setColor(0.2, 0.2, 0.2, selectedAction and 1 or 0.5)
+	if selectedAction then
+		love.graphics.setColor(unpack(Colors.coins))
+		local costText = "Total $" .. gameState.pet.action_costs[selectedAction]
+		local textWidth = fonts.button:getWidth(costText)
+		local centerX = windowX + Shop.POPUP_WIDTH / 2
+
+		love.graphics.print(costText, centerX - textWidth / 2 - 5, buttonY - 25)
+		love.graphics.draw(coinIcon, centerX + textWidth / 2, buttonY - 23, 0, coinScale, coinScale)
+	end
+
+	-- Buy button
+	local canBuy = selectedAction and gameState.pet.coins >= gameState.pet.action_costs[selectedAction]
+	love.graphics.setColor(0.2, 0.2, 0.2, canBuy and 1 or 0.5)
 	love.graphics.rectangle("fill", buttonX, buttonY, Shop.BUY_BUTTON.width, Shop.BUY_BUTTON.height, 5)
-	love.graphics.setColor(1, 1, 1, selectedAction and 1 or 0.5)
+	love.graphics.setColor(1, 1, 1, canBuy and 1 or 0.5)
 	love.graphics.printf("Buy", buttonX, buttonY + 5, Shop.BUY_BUTTON.width, "center")
 
-	-- Draw window 'x' button
+	-- Close button
 	love.graphics.setColor(1, 1, 1, 0.8)
 	local closeX = windowX + Shop.POPUP_WIDTH - 30
 	local closeY = windowY + 10
@@ -115,6 +155,7 @@ function Shop.handleClick(x, y, gameState)
 	local windowX = (Constants.WINDOW_WIDTH - Shop.POPUP_WIDTH) / 2
 	local windowY = (Constants.WINDOW_HEIGHT - Shop.POPUP_HEIGHT) / 2
 
+	-- Handle close button click
 	local closeX = windowX + Shop.POPUP_WIDTH - 30
 	local closeY = windowY + 10
 	if x >= closeX and x <= closeX + 20 and y >= closeY and y <= closeY + 20 then
@@ -122,26 +163,29 @@ function Shop.handleClick(x, y, gameState)
 		return true
 	end
 
+	-- Handle action selection
 	local startY = windowY + 70
 	local itemsPerCol = 5
-	local numColumns = 2
 
 	for i, action in ipairs(Shop.actions) do
 		local col = math.floor((i - 1) / itemsPerCol)
 		local row = (i - 1) % itemsPerCol
 
 		local radioX = windowX + Shop.POPUP_WIDTH / 2 + (col - 0.5) * Shop.RADIO_SPACING_X - Shop.RADIO_SIZE
-		local radioY = startY + row * Shop.RADIO_SPACING_Y
+		local radioY = startY + row * Shop.RADIO_SPACING_Y + 10
 
 		local dx = x - (radioX + Shop.RADIO_SIZE)
 		local dy = y - radioY
 
 		if dx * dx + dy * dy <= Shop.RADIO_SIZE * Shop.RADIO_SIZE then
-			selectedAction = action.action
+			if gameState.pet.coins >= gameState.pet.action_costs[action.action] then
+				selectedAction = action.action
+			end
 			return true
 		end
 	end
 
+	-- Handle buy button click
 	local buttonX = windowX + (Shop.POPUP_WIDTH - Shop.BUY_BUTTON.width) / 2
 	local buttonY = windowY + Shop.POPUP_HEIGHT - Shop.BUY_BUTTON.height - 20
 
@@ -152,31 +196,37 @@ function Shop.handleClick(x, y, gameState)
 		and y >= buttonY
 		and y <= buttonY + Shop.BUY_BUTTON.height
 	then
-		if selectedAction == "feed" then
-			gameState.pet:feed()
-		elseif selectedAction == "rest" then
-			gameState.pet:rest()
-		elseif selectedAction == "play" then
-			gameState.pet:play()
-		elseif selectedAction == "medicine" then
-			gameState.pet:give_medicine()
-		elseif selectedAction == "treat" then
-			gameState.pet:give_treat()
-		elseif selectedAction == "exercise" then
-			gameState.pet:exercise()
-		elseif selectedAction == "vitamins" then
-			gameState.pet:give_vitamins()
-		elseif selectedAction == "train" then
-			gameState.pet:train()
-		elseif selectedAction == "cuddle" then
-			gameState.pet:cuddle()
-		elseif selectedAction == "groom" then
-			gameState.pet:groom()
-		end
+		if gameState.pet.coins >= gameState.pet.action_costs[selectedAction] then
+			-- Deduct coins
+			gameState.pet.coins = gameState.pet.coins - gameState.pet.action_costs[selectedAction]
 
-		gameState.pet:check_death()
-		gameState.game:save()
-		return true
+			-- Perform action
+			if selectedAction == "feed" then
+				gameState.pet:feed()
+			elseif selectedAction == "rest" then
+				gameState.pet:rest()
+			elseif selectedAction == "play" then
+				gameState.pet:play()
+			elseif selectedAction == "medicine" then
+				gameState.pet:give_medicine()
+			elseif selectedAction == "treat" then
+				gameState.pet:give_treat()
+			elseif selectedAction == "exercise" then
+				gameState.pet:exercise()
+			elseif selectedAction == "vitamins" then
+				gameState.pet:give_vitamins()
+			elseif selectedAction == "train" then
+				gameState.pet:train()
+			elseif selectedAction == "cuddle" then
+				gameState.pet:cuddle()
+			elseif selectedAction == "groom" then
+				gameState.pet:groom()
+			end
+
+			gameState.pet:check_death()
+			gameState.game:save()
+			return true
+		end
 	end
 
 	return false

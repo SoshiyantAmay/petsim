@@ -1,1 +1,1 @@
-{"pets":[{"is_alive":true,"age":21,"death_reason":"starvation","hunger":40,"difficulty":"normal","name":"Blob","happiness":100,"energy":30,"health":78,"species":"generic"}],"current_day":22}
+{"current_day":34,"pets":[{"is_alive":false,"hunger":10,"age":33,"energy":0,"health":0,"species":"generic","name":"joojoo","happiness":20,"difficulty":"normal"},{"is_alive":false,"hunger":0,"age":2,"energy":0,"health":0,"species":"generic","name":"Jimjim","death_age":2,"death_reason":"exhaustion","happiness":84.5,"difficulty":"hard"}]}

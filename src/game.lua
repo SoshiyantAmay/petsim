@@ -1,4 +1,4 @@
-local Pet = require("src.pet")
+local Pet = require("src.game.pet")
 
 local Game = {}
 

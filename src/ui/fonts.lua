@@ -13,6 +13,11 @@ function Fonts.load()
 	Fonts.button = love.graphics.newFont("assets/fonts/Rajdhani-Medium.ttf", 15)
 	-- Coins (Main)
 	Fonts.coins = love.graphics.newFont("assets/fonts/Rajdhani-SemiBold.ttf", 30)
+	-- Table
+	Fonts.table = love.graphics.newFont("assets/fonts/Rajdhani-Regular.ttf", 15)
+	-- Close Button
+	Fonts.close = love.graphics.newFont("assets/fonts/Rajdhani-Regular.ttf", 28)
+
 	return Fonts
 end
 

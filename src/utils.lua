@@ -22,9 +22,9 @@ function Utils.handleTextInput(fonts)
 	love.graphics.setColor(0, 0, 0, 0.8)
 	love.graphics.rectangle(
 		"fill",
-		Constants.WINDOW_WIDTH / 4,
-		Constants.WINDOW_HEIGHT / 2 - 60,
-		Constants.WINDOW_WIDTH / 2,
+		Constants.General.WINDOW_WIDTH / 4,
+		Constants.General.WINDOW_HEIGHT / 2 - 60,
+		Constants.General.WINDOW_WIDTH / 2,
 		120
 	)
 
@@ -32,28 +32,34 @@ function Utils.handleTextInput(fonts)
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.printf(
 		"Enter pet name:",
-		Constants.WINDOW_WIDTH / 4,
-		Constants.WINDOW_HEIGHT / 2 - 55,
-		Constants.WINDOW_WIDTH / 2,
+		Constants.General.WINDOW_WIDTH / 4,
+		Constants.General.WINDOW_HEIGHT / 2 - 55,
+		Constants.General.WINDOW_WIDTH / 2,
 		"center"
 	)
 
 	love.graphics.printf(
 		Utils.currentInput .. "_",
-		Constants.WINDOW_WIDTH / 4,
-		Constants.WINDOW_HEIGHT / 2 - 25,
-		Constants.WINDOW_WIDTH / 2,
+		Constants.General.WINDOW_WIDTH / 4,
+		Constants.General.WINDOW_HEIGHT / 2 - 25,
+		Constants.General.WINDOW_WIDTH / 2,
 		"center"
 	)
 
 	-- Draw difficulty selection title
-	local startY = Constants.WINDOW_HEIGHT / 2 + 5
-	love.graphics.printf("Select difficulty:", Constants.WINDOW_WIDTH / 4, startY, Constants.WINDOW_WIDTH / 2, "center")
+	local startY = Constants.General.WINDOW_HEIGHT / 2 + 5
+	love.graphics.printf(
+		"Select difficulty:",
+		Constants.General.WINDOW_WIDTH / 4,
+		startY,
+		Constants.General.WINDOW_WIDTH / 2,
+		"center"
+	)
 
 	-- Calculate dimensions for proper centering
 	local optionWidth = 80 -- Width of each option including radio button and text
 	local totalWidth = optionWidth * 3 -- Total width of all three options
-	local startX = Constants.WINDOW_WIDTH / 2 - totalWidth / 2 + 15 -- Starting X for first option
+	local startX = Constants.General.WINDOW_WIDTH / 2 - totalWidth / 2 + 15 -- Starting X for first option
 
 	-- Draw difficulty options
 	for i = 1, 3 do
@@ -80,10 +86,10 @@ end
 -- Function to handle difficulty selection UI
 function Utils.handleDifficultyClick(x, y)
 	if Utils.isNaming then
-		local startY = Constants.WINDOW_HEIGHT / 2 + 30
+		local startY = Constants.General.WINDOW_HEIGHT / 2 + 30
 		local optionWidth = 80
 		local totalWidth = optionWidth * 3
-		local startX = Constants.WINDOW_WIDTH / 2 - totalWidth / 2
+		local startX = Constants.General.WINDOW_WIDTH / 2 - totalWidth / 2
 
 		for i = 1, 3 do
 			local buttonX = startX + (i - 1) * optionWidth

@@ -11,7 +11,7 @@ local exitIcon = love.graphics.newImage("assets/icons/exit.png")
 Button.buttons = {
 	{ text = "Next Day", action = "nextday", icon = nextdayIcon },
 	{ text = "Shop", action = "shop", icon = cartIcon },
-	{ text = "R.I.P", action = "rip", icon = ripIcon },
+	{ text = "R.I.P", action = "rip", icon = ripIcon, alwaysEnabled = true },
 	{ text = "Exit", action = "exit", icon = exitIcon, alwaysEnabled = true },
 }
 
@@ -80,7 +80,8 @@ end
 
 function Button.handleClick(x, y, gameState)
 	for i, btn in ipairs(Button.buttons) do
-		local button_y = Constants.BUTTONS_START_Y + (i - 1) * (Constants.BUTTON_HEIGHT + Constants.BUTTON_PADDING)
+		local button_y = Constants.General.BUTTONS_START_Y
+			+ (i - 1) * (Constants.General.BUTTON_HEIGHT + Constants.General.BUTTON_PADDING)
 
 		-- Only check if button is disabled if it's not always enabled
 		local isDisabled = not btn.alwaysEnabled and not gameState.pet.is_alive
@@ -90,17 +91,18 @@ function Button.handleClick(x, y, gameState)
 			and Button.isInside(
 				x,
 				y,
-				Constants.BUTTONS_START_X,
+				Constants.General.BUTTONS_START_X,
 				button_y,
-				Constants.BUTTON_WIDTH,
-				Constants.BUTTON_HEIGHT
+				Constants.General.BUTTON_WIDTH,
+				Constants.General.BUTTON_HEIGHT
 			)
 		then
 			if btn.action == "nextday" then
 				gameState.game:advance_day()
 			elseif btn.action == "shop" then
-				-- This will be handled by the shop module
 				gameState.showShop = true
+			elseif btn.action == "rip" then
+				gameState.showCemetery = true
 			elseif btn.action == "exit" then
 				gameState.game:save()
 				love.event.quit()
@@ -114,17 +116,18 @@ end
 function Button.drawAll(gameState)
 	love.graphics.setFont(love.graphics.getFont())
 	for i, btn in ipairs(Button.buttons) do
-		local button_y = Constants.BUTTONS_START_Y + (i - 1) * (Constants.BUTTON_HEIGHT + Constants.BUTTON_PADDING)
+		local button_y = Constants.General.BUTTONS_START_Y
+			+ (i - 1) * (Constants.General.BUTTON_HEIGHT + Constants.General.BUTTON_PADDING)
 
 		-- Always draw enabled colors for alwaysEnabled buttons, regardless of pet state
 		local shouldBeDisabled = not btn.alwaysEnabled and not gameState.pet.is_alive
 
 		Button.draw(
 			btn.text,
-			Constants.BUTTONS_START_X,
+			Constants.General.BUTTONS_START_X,
 			button_y,
-			Constants.BUTTON_WIDTH,
-			Constants.BUTTON_HEIGHT,
+			Constants.General.BUTTON_WIDTH,
+			Constants.General.BUTTON_HEIGHT,
 			shouldBeDisabled,
 			btn.icon
 		)

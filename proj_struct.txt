@@ -9,8 +9,7 @@
 │   │   ├── Rajdhani-Medium.ttf
 │   │   ├── Rajdhani-Regular.ttf
 │   │   ├── Rajdhani-SemiBold.ttf
-│   │   ├── Righteous-Regular.ttf
-│   │   └── VT323-Regular.ttf
+│   │   └── Righteous-Regular.ttf
 │   └── icons
 │       ├── cart.png
 │       ├── coin.png
@@ -25,6 +24,8 @@
 │       ├── play.png
 │       ├── rest.png
 │       ├── rip.png
+│       ├── sort-down.png
+│       ├── sort-up.png
 │       ├── train.png
 │       ├── treat.png
 │       └── vitamins.png
@@ -37,12 +38,14 @@
 ├── proj_struct.txt
 ├── src
 │   ├── game
+│   │   ├── actions.lua
+│   │   ├── pet.lua
 │   │   └── state.lua
 │   ├── game.lua
 │   ├── globals.lua
-│   ├── pet.lua
 │   ├── ui
 │   │   ├── button.lua
+│   │   ├── cemetery.lua
 │   │   ├── constants.lua
 │   │   ├── draw.lua
 │   │   ├── fonts.lua
@@ -55,4 +58,4 @@
     ├── pet-logic.md
     └── proj_struct.txt
 
-10 directories, 46 files
+10 directories, 49 files

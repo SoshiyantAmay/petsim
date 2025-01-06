@@ -6,6 +6,7 @@ local Button = require("src.ui.button")
 local Shop = require("src.ui.shop")
 local GameState = require("src.game.state")
 local Constants = require("src.ui.constants")
+local Cemetery = require("src.ui.cemetery")
 
 local gameState
 local fonts
@@ -36,12 +37,17 @@ local function checkPetStatus()
 	lastPetStatus = currentPet:get_status()
 end
 
+-- Process text inputs
 function love.textinput(t)
-	Utils.handleTextInputChar(t)
+	if Utils.isNaming then
+		Utils.handleTextInputChar(t)
+	elseif gameState.showCemetery then
+		Cemetery.handleTextInput(t)
+	end
 end
 
 function love.load()
-	love.window.setMode(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)
+	love.window.setMode(Constants.General.WINDOW_WIDTH, Constants.General.WINDOW_HEIGHT)
 	fonts = Fonts.load()
 	backgroundImage = love.graphics.newImage("assets/background.jpg")
 	gameState = GameState.initialize()
@@ -58,6 +64,8 @@ function love.mousepressed(x, y, button, istouch, presses)
 			Utils.handleDifficultyClick(x, y)
 		elseif gameState.showShop then
 			Shop.handleClick(x, y, gameState)
+		elseif gameState.showCemetery then
+			Cemetery.handleClick(x, y, gameState)
 		else
 			Button.handleClick(x, y, gameState)
 		end
@@ -79,12 +87,25 @@ function love.draw()
 	if gameState.showShop then
 		Shop.draw(gameState, fonts)
 	end
+
+	if gameState.showCemetery then
+		Draw.cemetery(gameState, fonts)
+	end
 end
 
+-- Process pressed keys
 function love.keypressed(key)
 	Utils.handleTextInputKey(key)
-	if key == "escape" and gameState.showShop then
-		gameState.showShop = false
+	if key == "escape" then
+		if gameState.showShop then
+			gameState.showShop = false
+		elseif gameState.showCemetery then
+			gameState.showCemetery = false
+		end
+	end
+
+	if gameState.showCemetery then
+		Cemetery.handleKeyPressed(key)
 	end
 end
 

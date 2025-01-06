@@ -48,19 +48,29 @@ end
 
 -- New method to check death conditions
 function Pet:check_death()
+	local death_triggered = false
+
 	if self.happiness <= 0 then
 		self.health = math.max(0, self.health - 10 * self.difficulty_modifier.stat_decay_rate)
 		self.death_reason = "depression"
+		death_triggered = true
 	end
 
 	if self.hunger <= 0 then
 		self.health = math.max(0, self.health - 10 * self.difficulty_modifier.stat_decay_rate)
 		self.death_reason = "starvation"
+		death_triggered = true
 	end
 
 	if self.energy <= 0 then
 		self.health = math.max(0, self.health - 10 * self.difficulty_modifier.stat_decay_rate)
 		self.death_reason = "exhaustion"
+		death_triggered = true
+	end
+
+	-- Set natural causes if health drops to 0 without other triggers
+	if self.health <= 0 and not death_triggered then
+		self.death_reason = "natural causes"
 	end
 
 	if self.health <= 0 and self.is_alive then

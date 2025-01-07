@@ -152,7 +152,7 @@ function Pet:get_status()
 		hunger = self.hunger,
 		happiness = self.happiness,
 		energy = self.energy,
-		age = self.age,
+		age = self.death_age or self.age,
 		health = self.health,
 		intelligence = self.intelligence,
 		is_alive = self.is_alive,

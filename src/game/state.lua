@@ -17,9 +17,22 @@ function GameState.initialize()
 	return state
 end
 
-function GameState.checkPetDeath(state)
+function GameState.createNewPet(state)
+	Utils.startTextInput(function(name)
+		if not name or name:len() == 0 then
+			name = "Pet" .. (#state.game:get_pets() + 1)
+		end
+
+		state.game:create_pet(name, "generic", Utils.selectedDifficulty)
+		local lastPetIndex = #state.game:get_pets()
+		state.pet = state.game:get_pets()[lastPetIndex]
+		state.game:save()
+	end)
+end
+
+function GameState.checkPetStatus(state)
 	local currentPet = state.pet
-	if not currentPet.is_alive then
+	if not currentPet.is_alive and (lastPetStatus == nil or lastPetStatus.is_alive) then
 		local status = currentPet:get_status()
 		local deathAge = status.death_age or status.age or 0
 		local deathReason = status.death_reason or "unknown causes"
@@ -38,19 +51,6 @@ function GameState.checkPetDeath(state)
 			GameState.createNewPet(state)
 		end
 	end
+	lastPetStatus = currentPet:get_status()
 end
-
-function GameState.createNewPet(state)
-	Utils.startTextInput(function(name)
-		if not name or name:len() == 0 then
-			name = "Pet" .. (#state.game:get_pets() + 1)
-		end
-
-		state.game:create_pet(name, "generic", Utils.selectedDifficulty)
-		local lastPetIndex = #state.game:get_pets()
-		state.pet = state.game:get_pets()[lastPetIndex]
-		state.game:save()
-	end)
-end
-
 return GameState

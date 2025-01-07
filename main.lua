@@ -11,40 +11,6 @@ local Cemetery = require("src.ui.cemetery")
 local gameState
 local fonts
 local backgroundImage
-local lastPetStatus = nil
-
-local function checkPetStatus()
-	local currentPet = gameState.pet
-	if not currentPet.is_alive and (lastPetStatus == nil or lastPetStatus.is_alive) then
-		local status = currentPet:get_status()
-		local deathAge = status.death_age or status.age or 0
-		local deathReason = status.death_reason or "unknown causes"
-
-		local message = string.format(
-			"%s has died at age %d due to %s.\nWould you like to create a new pet?",
-			status.name,
-			deathAge,
-			deathReason
-		)
-
-		local buttons = { "Yes", "No", enterbutton = 1, escapebutton = 2 }
-		local pressed = love.window.showMessageBox("Pet Death", message, buttons, "info")
-
-		if pressed == 1 then
-			GameState.createNewPet(gameState)
-		end
-	end
-	lastPetStatus = currentPet:get_status()
-end
-
--- Process text inputs
-function love.textinput(t)
-	if Utils.isNaming then
-		Utils.handleTextInputChar(t)
-	elseif gameState.showCemetery then
-		Cemetery.handleTextInput(t)
-	end
-end
 
 function love.load()
 	love.window.setMode(Constants.General.WINDOW_WIDTH, Constants.General.WINDOW_HEIGHT)
@@ -55,7 +21,7 @@ function love.load()
 end
 
 function love.update(dt)
-	checkPetStatus()
+	GameState.checkPetStatus(gameState)
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
@@ -90,6 +56,15 @@ function love.draw()
 
 	if gameState.showCemetery then
 		Draw.cemetery(gameState, fonts)
+	end
+end
+
+-- Process text inputs
+function love.textinput(t)
+	if Utils.isNaming then
+		Utils.handleTextInputChar(t)
+	elseif gameState.showCemetery then
+		Cemetery.handleTextInput(t)
 	end
 end
 

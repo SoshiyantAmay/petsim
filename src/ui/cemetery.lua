@@ -14,10 +14,9 @@ local columns = {
 }
 
 -- Recursively filters pets based on search text, maintaining original order for matching pets
--- @param pets: table - Array of pet objects to search through
--- @param searchText: string - Text to search for in pet attributes
--- @param index: number - Current position in pets array
--- @return table - Filtered array of pets matching search criteria
+-- Pets: table - Array of pet objects to search through
+-- SearchText: string - Text to search for in pet attributes
+-- Index: number - Current position in pets array
 local function filterPetsRecursive(pets, searchText, index)
 	-- Base case: if we've processed all pets, return empty array
 	if index > #pets then
@@ -51,11 +50,8 @@ local function filterPetsRecursive(pets, searchText, index)
 end
 
 -- Merges two sorted arrays while maintaining sort order based on specified column and direction
--- @param left: First sorted array to merge
--- @param right: Second sorted array to merge
--- @param column: The column/key to use for comparison
--- @param direction: Sort direction (1 for ascending, -1 for descending)
--- @return: Merged sorted array
+-- Column: The column/key to use for comparison
+-- Direction: Sort direction (1 for ascending, -1 for descending)
 local function merge(left, right, column, direction)
 	local result = {}
 	local i = 1 -- Index for left array
@@ -107,10 +103,6 @@ local function merge(left, right, column, direction)
 end
 
 -- Recursively sorts pets array using merge sort algorithm
--- @param pets: Array of pet objects to sort
--- @param column: Column/key to sort by
--- @param direction: Sort direction (1 for ascending, -1 for descending)
--- @return: Sorted array of pets
 local function mergeSortPets(pets, column, direction)
 	-- Base case: arrays of size 0 or 1 are already sorted
 	if #pets <= 1 then

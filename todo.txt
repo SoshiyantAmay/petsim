@@ -7,19 +7,7 @@
 7- Add intelligence to the pet attributes
 8- Add vitas icon to the pet info status box
 
-Action      $ (Coin)        Health      Hunger      Happiness       Energy
-Idle        -               -           -           -               -
-Age Up      -               
-Play
-Feed
-Medicine
-Cuddle
-Train
-Rest
-Vitamin
-Treat
-
 https://github.com/LewisJEllis/awesome-lua
 http://lua-users.org/wiki/StringRecipes
 https://github.com/airstruck/luigi
-
+https://www.flaticon.com

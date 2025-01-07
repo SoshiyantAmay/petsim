@@ -184,18 +184,7 @@ function Utils.load_game()
 	return Json.decode(content)
 end
 
--- Generate random pet name
-function Utils.generate_pet_name()
-	local prefixes = { "Fluffy", "Buddy", "Whiskers", "Rex", "Luna" }
-	local suffixes = { "Jr", "the Great", "Star", "Brave", "Wild" }
-
-	local prefix = prefixes[math.random(#prefixes)]
-	local suffix = suffixes[math.random(#suffixes)]
-
-	return prefix .. " " .. suffix
-end
-
--- Helper function to recursively print table contents
+-- Debugging helper function to recursively print table contents
 function Utils.printTable(t, indent)
 	indent = indent or ""
 	for k, v in pairs(t) do
